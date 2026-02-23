@@ -1,0 +1,85 @@
+package com.easyteeth.EasyTeeth.model;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+
+
+@Entity
+public class Tooth {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Long id;
+	String name;
+	int number;
+	boolean extracted;
+	
+
+	
+	public Tooth() {
+		
+	}
+	
+	
+
+
+	public Tooth(String name, int number,boolean extracted) {
+		super();
+		this.name = name;
+		this.number = number;
+		this.extracted = extracted;
+	}
+
+
+
+
+	public Long getId() {
+		return id;
+	}
+
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
+
+	public String getName() {
+		return name;
+	}
+
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+
+	public int getNumber() {
+		return number;
+	}
+
+
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+	
+
+
+
+	
+	
+	
+	
+}
