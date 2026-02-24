@@ -1,1 +1,9 @@
+package com.easyteeth.EasyTeeth.controller;
+import com.easyteeth.EasyTeeth.model.*;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+
+
+}
