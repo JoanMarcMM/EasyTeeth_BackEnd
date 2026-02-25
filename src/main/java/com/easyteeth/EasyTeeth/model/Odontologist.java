@@ -50,6 +50,86 @@ public class Odontologist {
  
 
     public Odontologist() {}
+
+
+	public Long getId() {
+		return id;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public String getLastname1() {
+		return lastname1;
+	}
+
+
+	public void setLastname1(String lastname1) {
+		this.lastname1 = lastname1;
+	}
+
+
+	public String getLastname2() {
+		return lastname2;
+	}
+
+
+	public void setLastname2(String lastname2) {
+		this.lastname2 = lastname2;
+	}
+
+
+	public String getDni() {
+		return dni;
+	}
+
+
+	public void setDni(String dni) {
+		this.dni = dni;
+	}
+
+
+	public String getLicenseNumber() {
+		return licenseNumber;
+	}
+
+
+	public void setLicenseNumber(String licenseNumber) {
+		this.licenseNumber = licenseNumber;
+	}
+
+
+	public Set<Speciality> getSpecialities() {
+		return specialities;
+	}
+
+
+	public void setSpecialities(Set<Speciality> specialities) {
+		this.specialities = specialities;
+	}
+
+
+	public Set<Availability> getAvailabilities() {
+		return availabilities;
+	}
+
+
+	public void setAvailabilities(Set<Availability> availabilities) {
+		this.availabilities = availabilities;
+	}
 	
 	
 }
