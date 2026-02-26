@@ -50,7 +50,8 @@ public class Odontogram{
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "pathology_id", nullable = false)
     private Pathology pathology;
-
+    
+    
     private boolean treated;
     private String note;
 
@@ -58,7 +59,7 @@ public class Odontogram{
     
     
 
-	public Odontogram(Patient patient, Tooth tooth, Side side, Pathology pathology, boolean treated, String note) {
+	public Odontogram(Patient patient, Tooth tooth, Side side, Pathology pathology,boolean treated, String note) {
 		super();
 		this.patient = patient;
 		this.tooth = tooth;
@@ -131,6 +132,10 @@ public class Odontogram{
 	public void setNote(String note) {
 		this.note = note;
 	}
+
+
+
+	
 
     
 }

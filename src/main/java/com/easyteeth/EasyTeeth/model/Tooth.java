@@ -20,7 +20,7 @@ public class Tooth {
 	Long id;
 	String name;
 	int number;
-	boolean extracted;
+	
 	
 
 	
@@ -31,11 +31,11 @@ public class Tooth {
 	
 
 
-	public Tooth(String name, int number,boolean extracted) {
+	public Tooth(String name, int number) {
 		super();
 		this.name = name;
 		this.number = number;
-		this.extracted = extracted;
+		
 	}
 
 
