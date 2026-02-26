@@ -30,7 +30,7 @@ public class PatientController {
 	private PatientRepository patientRepository;
 
 	@PostMapping("/new")
-	public ResponseEntity<Patient> createNurse(@RequestBody Patient patient) {
+	public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
 		try {
 
 			if (validatePatient(patient) == false) {
@@ -69,7 +69,7 @@ public class PatientController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteNurse(@PathVariable long id) {
+	public ResponseEntity<String> deletePatient(@PathVariable long id) {
 
 		if (patientRepository.existsById(id)) {
 			patientRepository.deleteById(id);
