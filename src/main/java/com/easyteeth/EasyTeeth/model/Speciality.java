@@ -89,6 +89,12 @@ public class Speciality {
 		this.name = name;
 	}
 	
-	
+	public Set<Treatment> getTreatments() {
+	    return treatments;
+	}
+
+	public void setTreatments(Set<Treatment> treatments) {
+	    this.treatments = treatments;
+	}
 	
 }

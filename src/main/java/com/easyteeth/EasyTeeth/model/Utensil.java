@@ -1,15 +1,22 @@
 package com.easyteeth.EasyTeeth.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
 
@@ -22,11 +29,15 @@ public class Utensil {
 	String brand;
 	String model;
 	double price;
-	@OneToOne
-    @JoinColumn(name = "supplier_id", nullable = false)
-	Supplier supplier;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "supplier_id", nullable = false)
+	private Supplier supplier;
+	@OneToMany(mappedBy = "utensil", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<TreatmentUtensil> treatmentUtensils = new HashSet<>();
 
-	
+	public Set<TreatmentUtensil> getTreatmentUtensils() {
+	    return treatmentUtensils;
+	}
 
 	
 	public Utensil(){
@@ -45,7 +56,21 @@ public class Utensil {
 		this.supplier = supplier;
 	}
 
+	
+	
+	public void setTreatmentUtensils(Set<TreatmentUtensil> treatmentUtensils) {
+	    this.treatmentUtensils = treatmentUtensils;
+	}
+	
+	public void addTreatment(Treatment treatment, int quantity) {
+	    TreatmentUtensil tu = new TreatmentUtensil();
+	    tu.setUtensil(this);
+	    tu.setTreatment(treatment);
+	    tu.setQuantity(quantity);
 
+	    this.treatmentUtensils.add(tu);
+	    treatment.getTreatmentUtensils().add(tu);
+	}
 
 
 	public Long getId() {

@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ToothRepository extends JpaRepository<Tooth, Long> {
 
-	
+	boolean existsByNumber(int Number);
 
 }

@@ -11,9 +11,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(name = "uk_tooth_number", columnNames = "number"))
 public class Tooth {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

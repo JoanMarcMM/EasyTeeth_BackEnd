@@ -7,9 +7,9 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TreatmentRepository extends JpaRepository<Treatment, Long> {
+public interface UtensilRepository extends JpaRepository<Utensil, Long> {
 
-	Optional<Treatment> findByName(String name);
-    boolean existsByName(String name);
+	boolean existsByNameAndModel(String name, String model);
+    Optional<Utensil> findByNameAndModel(String name, String model);
 
 }

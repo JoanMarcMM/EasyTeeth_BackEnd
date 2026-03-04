@@ -43,9 +43,7 @@ public class Pathology {
 
 
 
-	public Pathology(Long id, String name) {
-		super();
-		this.id = id;
+	public Pathology( String name) {
 		this.name = name;
 	}
 
@@ -81,6 +79,22 @@ public class Pathology {
 		this.name = name;
 	}
 	
-	
+	public Set<Treatment> getTreatments() {
+	    return treatments;
+	}
+
+	public void setTreatments(Set<Treatment> treatments) {
+	    this.treatments = treatments;
+	}
+
+	public void addTreatment(Treatment treatment) {
+	    this.treatments.add(treatment);
+	    treatment.getPathologies().add(this); 
+	}
+
+	public void removeTreatment(Treatment treatment) {
+	    this.treatments.remove(treatment);
+	    treatment.getPathologies().remove(this);
+	}
 	
 }

@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BoxRepository extends JpaRepository<Box, Long> {
+public interface StorageRepository extends JpaRepository<Storage, Long> {
 
-	boolean existsByNumBox(int numBox);
+	boolean existsByNumStorage(int numStorage);
 
 
 }
