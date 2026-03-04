@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
 
@@ -32,10 +34,16 @@ public class Treatment {
 	@ManyToMany(mappedBy = "treatments")
     private Set<Speciality> specialities = new HashSet<>();
 	
-	public Treatment(){
-		
-	}
+	@OneToMany(mappedBy = "treatment", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<TreatmentUtensil> treatmentUtensils = new HashSet<>();
 
+	public Set<TreatmentUtensil> getTreatmentUtensils() {
+	    return treatmentUtensils;
+	}
+	
+	
+
+	public Treatment() {}
 	
 
 
@@ -86,6 +94,24 @@ public class Treatment {
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
+	
+	public Set<Pathology> getPathologies() {
+	    return pathologies;
+	}
+
+	public void setPathologies(Set<Pathology> pathologies) {
+	    this.pathologies = pathologies;
+	}
+	
+	public void addUtensil(Utensil utensil, int quantity) {
+	    TreatmentUtensil tu = new TreatmentUtensil();
+	    tu.setTreatment(this);
+	    tu.setUtensil(utensil);
+	    tu.setQuantity(quantity);
+	    this.treatmentUtensils.add(tu);
+	    utensil.getTreatmentUtensils().add(tu);
+	}
+	
 	
 	
 }
