@@ -11,6 +11,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 	List<Patient>findByNameContainingIgnoreCase(String name);
 	List<Patient>findByDniContainingIgnoreCase(String dni);
 	List<Patient>findBySsnContainingIgnoreCase(String ssn);
+	boolean existsByDni(String dni);
 
 
 }
