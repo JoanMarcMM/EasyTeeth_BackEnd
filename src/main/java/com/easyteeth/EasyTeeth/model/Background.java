@@ -24,7 +24,7 @@ public class Background {
 	boolean importantAllergie;
 	boolean infectiousDisease;
 	boolean hasSignedConsent;
-	boolean hasSignedAnestesia;
+	boolean hasSignedAnesthesia;
 	@OneToOne
     @JoinColumn(name = "patient_id", nullable = false)
 	Patient patient;
@@ -35,7 +35,7 @@ public class Background {
 
 	public Background(String familyHistory, String healthState, String lifeHabits, String allergies, String medication,
 			boolean importantAllergie, boolean infectiousDisease, boolean hasSignedConsent,
-			boolean hasSignedAnestesia) {
+			boolean hasSignedAnesthesia) {
 		super();
 		this.familyHistory = familyHistory;
 		this.healthState = healthState;
@@ -45,7 +45,7 @@ public class Background {
 		this.importantAllergie = importantAllergie;
 		this.infectiousDisease = infectiousDisease;
 		this.hasSignedConsent = hasSignedConsent;
-		this.hasSignedAnestesia = hasSignedAnestesia;
+		this.hasSignedAnesthesia = hasSignedAnesthesia;
 	}
 
 	public Long getId() {
@@ -120,12 +120,12 @@ public class Background {
 		this.hasSignedConsent = hasSignedConsent;
 	}
 
-	public boolean isHasSignedAnestesia() {
-		return hasSignedAnestesia;
+	public boolean isHasSignedAnesthesia() {
+		return hasSignedAnesthesia;
 	}
 
-	public void setHasSignedAnestesia(boolean hasSignedAnestesia) {
-		this.hasSignedAnestesia = hasSignedAnestesia;
+	public void setHasSignedAnesthesia(boolean hasSignedAnesthesia) {
+		this.hasSignedAnesthesia = hasSignedAnesthesia;
 	}
 	
 	
