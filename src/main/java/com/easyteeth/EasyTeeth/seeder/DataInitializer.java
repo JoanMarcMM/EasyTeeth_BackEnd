@@ -21,6 +21,7 @@ public class DataInitializer {
             seedService.seedPathologyIfMissingWithTreatments();
             seedService.seedSuppliersIfMissing();
             seedService.seedUtensilsIfMissingWithTreatments();
+            seedService.seedAvailabilityIfMissing();
         };
     }
 }

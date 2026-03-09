@@ -22,6 +22,7 @@ public class SeedService {
     private final UtensilRepository utensilRepository;
     private final TreatmentUtensilRepository treatmentUtensilRepository;
     private final SpecialityRepository specialityRepository;
+    private final AvailabilityRepository availabilityRepository;
 
     public SeedService(
             UserRepository userRepository,
@@ -34,7 +35,8 @@ public class SeedService {
             SupplierRepository supplierRepository,
             UtensilRepository utensilRepository,
             TreatmentUtensilRepository treatmentUtensilRepository,
-            SpecialityRepository specialityRepository
+            SpecialityRepository specialityRepository,
+            AvailabilityRepository availabilityRepository
     ) {
         this.userRepository = userRepository;
         this.toothRepository = toothRepository;
@@ -47,6 +49,7 @@ public class SeedService {
         this.utensilRepository = utensilRepository;
         this.treatmentUtensilRepository = treatmentUtensilRepository;
         this.specialityRepository = specialityRepository;
+        this.availabilityRepository = availabilityRepository;
     }
 
     private static final List<User> PRESET_USERS = List.of(
@@ -544,6 +547,36 @@ public class SeedService {
             }
 
             specialityRepository.save(speciality);
+        }
+    }
+    
+    private static final List<Availability> PRESET_AVAILABILITY = List.of(
+            new Availability("MONDAY",true,false),
+            new Availability("MONDAY",false,true),
+            
+            
+            new Availability("TUESDAY",true,false),
+            new Availability("TUESDAY",false,true),
+            
+            new Availability("WEDNESDAY",true,false),
+            new Availability("WEDNESDAY",false,true),
+            
+            new Availability("THURSDAY",true,false),
+            new Availability("THURSDAY",false,true),
+            
+            new Availability("FRIDAY",true,false),
+            new Availability("FRIDAY",false,true),
+            
+            new Availability("SATURDAY",true,false),
+            new Availability("SATURDAY",false,true)
+    );
+
+    @Transactional
+    public void seedAvailabilityIfMissing() {
+        for (Availability a : PRESET_AVAILABILITY) {
+            if (!availabilityRepository.existsByDayOfWeekAndMorningAndAfternoon(a.getDayOfWeek(),a.isMorning(),a.isAfternoon())) {
+                availabilityRepository.save(new Availability(a.getDayOfWeek(),a.isMorning(),a.isAfternoon()));
+            }
         }
     }
 }
