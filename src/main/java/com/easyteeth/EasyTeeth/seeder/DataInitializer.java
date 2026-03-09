@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class DataInitializer {
 
     @Bean
-    ApplicationRunner seedDatabase(SeedService seedService) {
+    ApplicationRunner seedDatabase(SeedService seedService, SeedServiceTest seedServiceTest ){
         return args -> {
 
             seedService.seedUsersIfMissing();
@@ -22,6 +22,10 @@ public class DataInitializer {
             seedService.seedSuppliersIfMissing();
             seedService.seedUtensilsIfMissingWithTreatments();
             seedService.seedAvailabilityIfMissing();
+            
+            seedServiceTest.seedPatientsIfMissing();
+            seedServiceTest.seedOdontologistsIfMissing();
+            seedServiceTest.seedAppointmentsIfMissing();
         };
     }
 }

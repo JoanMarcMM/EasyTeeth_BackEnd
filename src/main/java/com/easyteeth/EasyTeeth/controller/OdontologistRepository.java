@@ -9,5 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface OdontologistRepository extends JpaRepository<Odontologist, Long> {
 
 	
-
+	boolean existsByDni(String dni);
+    List<Odontologist> findBySpecialitiesId(Long specialityId);
 }
