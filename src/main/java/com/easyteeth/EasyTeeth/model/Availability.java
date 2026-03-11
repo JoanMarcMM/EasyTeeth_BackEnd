@@ -6,6 +6,8 @@ import java.util.Set;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,6 +31,7 @@ public class Availability {
     private boolean afternoon;
 
     @ManyToMany(mappedBy = "availabilities")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<Odontologist> odontologists = new HashSet<>();
 
     public Availability() {}

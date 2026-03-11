@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,11 +26,14 @@ import jakarta.persistence.UniqueConstraint;
         columnNames = {"utensil_id", "treatment_id"}
     )
 )
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TreatmentUtensil {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "utensil_id")
@@ -35,8 +41,8 @@ public class TreatmentUtensil {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "treatment_id")
+    @JsonIgnore
     private Treatment treatment;
-
    
     private int quantity;
 
