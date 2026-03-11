@@ -6,6 +6,9 @@ import java.util.Set;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,23 +24,31 @@ import jakarta.persistence.OneToOne;
 
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Utensil {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long id;
-	String name;
-	String brand;
-	String model;
-	double price;
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "supplier_id", nullable = false)
-	private Supplier supplier;
-	@OneToMany(mappedBy = "utensil", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<TreatmentUtensil> treatmentUtensils = new HashSet<>();
 
-	public Set<TreatmentUtensil> getTreatmentUtensils() {
-	    return treatmentUtensils;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    String name;
+    String brand;
+    String model;
+    double price;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "supplier_id", nullable = false)
+    private Supplier supplier;
+
+    @OneToMany(mappedBy = "utensil", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<TreatmentUtensil> treatmentUtensils = new HashSet<>();
+
+    public Set<TreatmentUtensil> getTreatmentUtensils() {
+        return treatmentUtensils;
+    }
+
+ 
 
 	
 	public Utensil(){

@@ -6,6 +6,9 @@ import java.util.Set;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,27 +23,34 @@ import jakarta.persistence.OneToOne;
 
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Treatment {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long id;
-	String name;
-	int duration; //in minutes
 
-	
-	@ManyToMany(mappedBy = "treatments")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    String name;
+    int duration; // en minuto
+    
+    @ManyToMany(mappedBy = "treatments")
+    @JsonIgnore
     private Set<Pathology> pathologies = new HashSet<>();
-	
-	@ManyToMany(mappedBy = "treatments")
-    private Set<Speciality> specialities = new HashSet<>();
-	
-	@OneToMany(mappedBy = "treatment", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<TreatmentUtensil> treatmentUtensils = new HashSet<>();
 
-	public Set<TreatmentUtensil> getTreatmentUtensils() {
-	    return treatmentUtensils;
-	}
-	
+    @ManyToMany(mappedBy = "treatments")
+    @JsonIgnore
+    private Set<Speciality> specialities = new HashSet<>();
+
+    @OneToMany(mappedBy = "treatment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TreatmentUtensil> treatmentUtensils = new HashSet<>();
+
+    public Set<TreatmentUtensil> getTreatmentUtensils() {
+        return treatmentUtensils;
+    }
+
+    public void setTreatmentUtensils(Set<TreatmentUtensil> treatmentUtensils) {
+        this.treatmentUtensils = treatmentUtensils;
+    }
 	
 
 	public Treatment() {}
