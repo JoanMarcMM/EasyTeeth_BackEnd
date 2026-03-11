@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -21,6 +22,7 @@ import jakarta.persistence.OneToOne;
 
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Odontologist {
 
     @Id
@@ -39,6 +41,7 @@ public class Odontologist {
         joinColumns = @JoinColumn(name = "odontologist_id"),
         inverseJoinColumns = @JoinColumn(name = "speciality_id")
     )
+    @JsonIgnore
     private Set<Speciality> specialities = new HashSet<>();
 
     

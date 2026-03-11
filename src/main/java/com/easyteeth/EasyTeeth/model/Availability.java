@@ -21,6 +21,7 @@ import jakarta.persistence.OneToOne;
 
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Availability {
 
     @Id

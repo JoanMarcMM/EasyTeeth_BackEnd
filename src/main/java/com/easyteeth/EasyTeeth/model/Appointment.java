@@ -8,6 +8,8 @@ import java.util.Set;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,6 +29,7 @@ import jakarta.persistence.Table;
         columnNames = {"patient_id", "box_id", "odontologist_id","treatment_id"}
     )
 )
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Appointment{
 
     @Id

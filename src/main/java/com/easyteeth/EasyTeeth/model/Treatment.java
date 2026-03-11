@@ -38,7 +38,7 @@ public class Treatment {
     private Set<Pathology> pathologies = new HashSet<>();
 
     @ManyToMany(mappedBy = "treatments")
-    @JsonIgnore
+    
     private Set<Speciality> specialities = new HashSet<>();
 
     @OneToMany(mappedBy = "treatment", cascade = CascadeType.ALL, orphanRemoval = true)
