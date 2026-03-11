@@ -1,6 +1,7 @@
 package com.easyteeth.EasyTeeth.controller;
 
 import com.easyteeth.EasyTeeth.model.*;
+import com.easyteeth.EasyTeeth.dto.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -253,6 +254,89 @@ public class AppointmentController {
 
 	    if (appointments.isEmpty()) return ResponseEntity.notFound().build();
 	    return ResponseEntity.ok(appointments);
+	}
+	
+	@GetMapping("/calendar/week")
+	public ResponseEntity<List<AppointmentCalendarDto>> getWeeklyCalendar(
+	        @RequestParam("start") LocalDate startDate,
+	        @RequestParam(value = "boxId", required = false) Long boxId
+	) {
+	    try {
+	        LocalDateTime start = startDate.atStartOfDay();
+	        LocalDateTime end = startDate.plusDays(7).atStartOfDay();
+
+	        List<Appointment> appointments = appointmentRepository.findCalendarAppointments(start, end, boxId);
+
+	        List<AppointmentCalendarDto> result = appointments.stream().map(a -> {
+	            AppointmentCalendarDto dto = new AppointmentCalendarDto();
+
+	            dto.setId(a.getId());
+	            dto.setMotive(a.getMotive());
+	            dto.setStart(a.getDate());
+
+	            dto.setDurationMinutes(
+	                    a.getTreatment() != null ? a.getTreatment().getDuration() : 0
+	            );
+
+	            dto.setBoxId(
+	                    a.getBox() != null ? a.getBox().getId() : null
+	            );
+	            dto.setBoxNum(
+	                    a.getBox() != null ? a.getBox().getNumBox() : 0
+	            );
+
+	            dto.setTreatmentId(
+	                    a.getTreatment() != null ? a.getTreatment().getId() : null
+	            );
+	            dto.setTreatmentName(
+	                    a.getTreatment() != null && a.getTreatment().getName() != null
+	                            ? a.getTreatment().getName()
+	                            : ""
+	            );
+
+	            dto.setPatientId(
+	                    a.getPatient() != null ? a.getPatient().getId() : null
+	            );
+	            dto.setPatientFullName(
+	                    buildPatientFullName(a.getPatient())
+	            );
+
+	            dto.setOdontologistId(
+	                    a.getOdontologist() != null ? a.getOdontologist().getId() : null
+	            );
+	            dto.setOdontologistFullName(
+	                    buildOdontologistFullName(a.getOdontologist())
+	            );
+
+	            return dto;
+	        }).toList();
+
+	        return ResponseEntity.ok(result);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
+	
+	private String buildPatientFullName(Patient patient) {
+	    if (patient == null) return "";
+
+	    String name = patient.getName() != null ? patient.getName() : "";
+	    String lastname1 = patient.getLastname1() != null ? patient.getLastname1() : "";
+	    String lastname2 = patient.getLastname2() != null ? patient.getLastname2() : "";
+
+	    return (name + " " + lastname1 + " " + lastname2).trim().replaceAll("\\s+", " ");
+	}
+
+	private String buildOdontologistFullName(Odontologist odontologist) {
+	    if (odontologist == null) return "";
+
+	    String name = odontologist.getName() != null ? odontologist.getName() : "";
+	    String lastname1 = odontologist.getLastname1() != null ? odontologist.getLastname1() : "";
+	    String lastname2 = odontologist.getLastname2() != null ? odontologist.getLastname2() : "";
+
+	    return (name + " " + lastname1 + " " + lastname2).trim().replaceAll("\\s+", " ");
 	}
 
 }

@@ -31,12 +31,6 @@ public class Box {
 	}
 
 
-
-
-	
-
-
-
 	public Box(int numBox) {
 		super();
 		this.numBox = numBox;
