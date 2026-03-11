@@ -3,6 +3,8 @@ package com.easyteeth.EasyTeeth.model;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +19,7 @@ import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(name = "uk_box_numBox", columnNames = "numBox"))
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Box {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
