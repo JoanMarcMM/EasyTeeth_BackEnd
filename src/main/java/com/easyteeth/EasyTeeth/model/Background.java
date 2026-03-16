@@ -59,6 +59,14 @@ public class Background {
 		this.id = id;
 	}
 
+	public Patient getPatient() {
+		return patient;
+	}
+
+	public void setPatient(Patient patient) {
+		this.patient = patient;
+	}
+
 	public String getFamilyHistory() {
 		return familyHistory;
 	}
