@@ -43,8 +43,8 @@ public class BackgroundController {
 	 */
 
 	@Autowired
-
 	private PatientRepository patientRepository; 
+	@Autowired
 	private BackgroundRepository backgroundRepository; 
 	
 	public BackgroundController(
@@ -52,7 +52,7 @@ public class BackgroundController {
 
     ) {
         this.patientRepository = patientRepository;
-
+        
     }
 
 	@PostMapping("/new")
@@ -85,6 +85,8 @@ public class BackgroundController {
 	        b.setInfectiousDisease(req.isInfectiousDisease());
 	        b.setHasSignedConsent(req.isHasSignedConsent());
 	        b.setHasSignedAnesthesia(req.isHasSignedAnesthesia());
+	        
+	        b.setPatient(patient);
 
 	        Background saved = backgroundRepository.save(b);
 	        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
