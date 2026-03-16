@@ -9,4 +9,5 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByPatientId(Long patientId);
 
     List<Image> findByType(String type);
+    void deleteByPatientId(Long patientId);
 }

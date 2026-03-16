@@ -13,5 +13,5 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 	List<Document> findByCreationDateBetween(LocalDateTime start, LocalDateTime end);
 	List<Document> findByPatientId(Long patientId);
 
-
+	void deleteByPatientId(Long patientId);
 }

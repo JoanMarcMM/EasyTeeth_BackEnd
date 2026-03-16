@@ -10,4 +10,6 @@ public interface BackgroundRepository extends JpaRepository<Background, Long> {
     List<Background> findByPatientId(Long patientId);
 
     boolean existsByPatientId(Long patientId);
+    
+    void deleteByPatientId(Long patientId);
 }

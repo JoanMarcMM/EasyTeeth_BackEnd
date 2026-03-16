@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,21 @@ public class PatientController {
 
 	@Autowired
 	private PatientRepository patientRepository;
+	@Autowired
+	private BackgroundRepository backgroundRepository;
+
+	@Autowired
+	private OdontogramRepository odontogramRepository;
+
+	@Autowired
+	private AppointmentRepository appointmentRepository;
+	@Autowired
+	private DocumentRepository documentRepository;
+
+	@Autowired
+	private ImageRepository imageRepository;
+
+	
 
 	@PostMapping("/new")
 	public ResponseEntity<?> createPatient(@RequestBody PatientRequest req) {
@@ -73,15 +89,26 @@ public class PatientController {
 		}
 	}
 
+	@Transactional
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deletePatient(@PathVariable long id) {
+	    try {
+	        if (!patientRepository.existsById(id)) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+	        }
 
-		if (patientRepository.existsById(id)) {
-			patientRepository.deleteById(id);
-			return ResponseEntity.ok("");
-		} else {	
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
-		}
+	        backgroundRepository.deleteByPatientId(id);
+	        imageRepository.deleteByPatientId(id);
+	        documentRepository.deleteByPatientId(id);
+	        odontogramRepository.deleteByPatientId(id);
+	        appointmentRepository.deleteByPatientId(id);
+	        patientRepository.deleteById(id);
+
+	        return ResponseEntity.noContent().build();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
 
 	@GetMapping("/index")

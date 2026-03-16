@@ -19,4 +19,5 @@ public interface OdontogramRepository extends JpaRepository<Odontogram, Long> {
             Long sideId,
             Long pathologyId
     );
+    void deleteByPatientId(Long patientId);
 }
