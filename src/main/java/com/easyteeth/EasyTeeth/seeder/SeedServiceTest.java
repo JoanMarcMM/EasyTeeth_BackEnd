@@ -27,42 +27,45 @@ public class SeedServiceTest {
 	private final OdontologistRepository odontologistRepository;
 	private final AppointmentRepository appointmentRepository;
 	private final OdontogramRepository odontogramRepository;
+	private final BackgroundRepository backgroundRepository;
 
-    public SeedServiceTest(
-    		UserRepository userRepository,
-            ToothRepository toothRepository,
-            SideRepository sideRepository,
-            BoxRepository boxRepository,
-            StorageRepository storageRepository,
-            PathologyRepository pathologyRepository,
-            TreatmentRepository treatmentRepository,
-            SupplierRepository supplierRepository,
-            UtensilRepository utensilRepository,
-            TreatmentUtensilRepository treatmentUtensilRepository,
-            SpecialityRepository specialityRepository,
-            AvailabilityRepository availabilityRepository,
-            PatientRepository patientRepository,
-            OdontologistRepository odontologistRepository,
-            AppointmentRepository appointmentRepository,
-            OdontogramRepository odontogramRepository
-    ) {
-    	this.userRepository = userRepository;
-        this.toothRepository = toothRepository;
-        this.sideRepository = sideRepository;
-        this.boxRepository = boxRepository;
-        this.storageRepository = storageRepository;
-        this.pathologyRepository = pathologyRepository;
-        this.treatmentRepository = treatmentRepository;
-        this.supplierRepository = supplierRepository;
-        this.utensilRepository = utensilRepository;
-        this.treatmentUtensilRepository = treatmentUtensilRepository;
-        this.specialityRepository = specialityRepository;
-        this.availabilityRepository = availabilityRepository;
-        this.patientRepository = patientRepository;
-        this.odontologistRepository = odontologistRepository;
-        this.appointmentRepository = appointmentRepository;
-        this.odontogramRepository = odontogramRepository;
-    }
+	public SeedServiceTest(
+	        UserRepository userRepository,
+	        ToothRepository toothRepository,
+	        SideRepository sideRepository,
+	        BoxRepository boxRepository,
+	        StorageRepository storageRepository,
+	        PathologyRepository pathologyRepository,
+	        TreatmentRepository treatmentRepository,
+	        SupplierRepository supplierRepository,
+	        UtensilRepository utensilRepository,
+	        TreatmentUtensilRepository treatmentUtensilRepository,
+	        SpecialityRepository specialityRepository,
+	        AvailabilityRepository availabilityRepository,
+	        PatientRepository patientRepository,
+	        OdontologistRepository odontologistRepository,
+	        AppointmentRepository appointmentRepository,
+	        OdontogramRepository odontogramRepository,
+	        BackgroundRepository backgroundRepository
+	) {
+	    this.userRepository = userRepository;
+	    this.toothRepository = toothRepository;
+	    this.sideRepository = sideRepository;
+	    this.boxRepository = boxRepository;
+	    this.storageRepository = storageRepository;
+	    this.pathologyRepository = pathologyRepository;
+	    this.treatmentRepository = treatmentRepository;
+	    this.supplierRepository = supplierRepository;
+	    this.utensilRepository = utensilRepository;
+	    this.treatmentUtensilRepository = treatmentUtensilRepository;
+	    this.specialityRepository = specialityRepository;
+	    this.availabilityRepository = availabilityRepository;
+	    this.patientRepository = patientRepository;
+	    this.odontologistRepository = odontologistRepository;
+	    this.appointmentRepository = appointmentRepository;
+	    this.odontogramRepository = odontogramRepository;
+	    this.backgroundRepository = backgroundRepository;
+	}
     
     
     private static final List<Patient> PRESET_PATIENTS = List.of(
@@ -336,6 +339,135 @@ public class SeedServiceTest {
 
                     odontogramRepository.save(odontogram);
                 }
+            }
+        }
+    }
+    
+    @Transactional
+    public void seedBackgroundsIfMissing() {
+
+        Map<Long, Patient> patientById = new HashMap<>();
+        for (Patient p : patientRepository.findAll()) {
+            patientById.put(p.getId(), p);
+        }
+
+        class BackgroundPreset {
+            Long patientId;
+            String familyHistory;
+            String healthState;
+            String lifeHabits;
+            String allergies;
+            String medication;
+            boolean importantAllergie;
+            boolean infectiousDisease;
+            boolean hasSignedConsent;
+            boolean hasSignedAnesthesia;
+
+            BackgroundPreset(
+                    Long patientId,
+                    String familyHistory,
+                    String healthState,
+                    String lifeHabits,
+                    String allergies,
+                    String medication,
+                    boolean importantAllergie,
+                    boolean infectiousDisease,
+                    boolean hasSignedConsent,
+                    boolean hasSignedAnesthesia
+            ) {
+                this.patientId = patientId;
+                this.familyHistory = familyHistory;
+                this.healthState = healthState;
+                this.lifeHabits = lifeHabits;
+                this.allergies = allergies;
+                this.medication = medication;
+                this.importantAllergie = importantAllergie;
+                this.infectiousDisease = infectiousDisease;
+                this.hasSignedConsent = hasSignedConsent;
+                this.hasSignedAnesthesia = hasSignedAnesthesia;
+            }
+        }
+
+        List<BackgroundPreset> preset = List.of(
+                new BackgroundPreset(
+                        1L,
+                        "Pare amb antecedents de càries recurrents i mare amb bruxisme.",
+                        "Bon estat general de salut.",
+                        "Raspallat 2 cops al dia, consum moderat de cafè.",
+                        "Cap al·lèrgia coneguda.",
+                        "No pren medicació habitual.",
+                        false,
+                        false,
+                        true,
+                        true
+                ),
+                new BackgroundPreset(
+                        2L,
+                        "Antecedents familiars de sensibilitat dental i gingivitis.",
+                        "Salut general correcta.",
+                        "Raspallat irregular, consum freqüent de dolços.",
+                        "Al·lèrgia lleu a penicil·lina.",
+                        "Antihistamínics en èpoques d'al·lèrgia.",
+                        true,
+                        false,
+                        true,
+                        true
+                ),
+                new BackgroundPreset(
+                        3L,
+                        "Sense antecedents familiars rellevants.",
+                        "Pacient amb estrès i episodis de bruxisme nocturn.",
+                        "Fuma ocasionalment i pren cafè diàriament.",
+                        "Cap al·lèrgia coneguda.",
+                        "Ibuprofèn puntualment.",
+                        false,
+                        false,
+                        true,
+                        false
+                ),
+                new BackgroundPreset(
+                        4L,
+                        "Mare amb problemes periodontals.",
+                        "Bona salut general, però amb sensibilitat dental.",
+                        "Higiene oral bona, dieta àcida freqüent.",
+                        "Al·lèrgia a alguns antiinflamatoris.",
+                        "Pren suplements vitamínics.",
+                        true,
+                        false,
+                        true,
+                        true
+                ),
+                new BackgroundPreset(
+                        5L,
+                        "Antecedents de càries i desgast dental a la família.",
+                        "Salut general estable.",
+                        "Raspallat 3 cops al dia, però amb apretament dental.",
+                        "Sense al·lèrgies conegudes.",
+                        "No pren medicació habitual.",
+                        false,
+                        false,
+                        true,
+                        false
+                )
+        );
+
+        for (BackgroundPreset bp : preset) {
+            Patient patient = patientById.get(bp.patientId);
+
+            if (patient != null && !backgroundRepository.existsByPatientId(bp.patientId)) {
+                Background background = new Background();
+                background.setPatient(patient);
+                background.setFamilyHistory(bp.familyHistory);
+                background.setHealthState(bp.healthState);
+                background.setLifeHabits(bp.lifeHabits);
+                background.setAllergies(bp.allergies);
+                background.setMedication(bp.medication);
+                background.setImportantAllergie(bp.importantAllergie);
+                background.setInfectiousDisease(bp.infectiousDisease);
+                background.setHasSignedConsent(bp.hasSignedConsent);
+                background.setHasSignedAnesthesia(bp.hasSignedAnesthesia);
+
+                backgroundRepository.save(background);
             }
         }
     }
