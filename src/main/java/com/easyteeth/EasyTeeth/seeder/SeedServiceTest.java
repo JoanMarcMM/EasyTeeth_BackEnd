@@ -26,6 +26,7 @@ public class SeedServiceTest {
 	private final PatientRepository patientRepository;
 	private final OdontologistRepository odontologistRepository;
 	private final AppointmentRepository appointmentRepository;
+	private final OdontogramRepository odontogramRepository;
 
     public SeedServiceTest(
     		UserRepository userRepository,
@@ -42,7 +43,8 @@ public class SeedServiceTest {
             AvailabilityRepository availabilityRepository,
             PatientRepository patientRepository,
             OdontologistRepository odontologistRepository,
-            AppointmentRepository appointmentRepository
+            AppointmentRepository appointmentRepository,
+            OdontogramRepository odontogramRepository
     ) {
     	this.userRepository = userRepository;
         this.toothRepository = toothRepository;
@@ -59,6 +61,7 @@ public class SeedServiceTest {
         this.patientRepository = patientRepository;
         this.odontologistRepository = odontologistRepository;
         this.appointmentRepository = appointmentRepository;
+        this.odontogramRepository = odontogramRepository;
     }
     
     
@@ -233,6 +236,105 @@ public class SeedServiceTest {
                     appointment.setTreatment(treatment);
 
                     appointmentRepository.save(appointment);
+                }
+            }
+        }
+    }
+    
+    @Transactional
+    public void seedOdontogramsIfMissing() {
+
+        Map<Long, Patient> patientById = new HashMap<>();
+        for (Patient p : patientRepository.findAll()) {
+            patientById.put(p.getId(), p);
+        }
+
+        Map<Long, Tooth> toothById = new HashMap<>();
+        for (Tooth t : toothRepository.findAll()) {
+            toothById.put(t.getId(), t);
+        }
+
+        Map<Long, Side> sideById = new HashMap<>();
+        for (Side s : sideRepository.findAll()) {
+            sideById.put(s.getId(), s);
+        }
+
+        Map<Long, Pathology> pathologyById = new HashMap<>();
+        for (Pathology p : pathologyRepository.findAll()) {
+            pathologyById.put(p.getId(), p);
+        }
+
+        class OdontogramPreset {
+            Long patientId;
+            Long toothId;
+            Long sideId;
+            Long pathologyId;
+            boolean treated;
+            String note;
+
+            OdontogramPreset(Long patientId, Long toothId, Long sideId, Long pathologyId, boolean treated, String note) {
+                this.patientId = patientId;
+                this.toothId = toothId;
+                this.sideId = sideId;
+                this.pathologyId = pathologyId;
+                this.treated = treated;
+                this.note = note;
+            }
+        }
+
+        List<OdontogramPreset> preset = List.of(
+                // PACIENTE 1 - Marc
+                new OdontogramPreset(1L, 16L, 1L, 1L, false, "Càries incipient a cara vestibular"),
+                new OdontogramPreset(1L, 26L, 2L, 2L, true, "Empastament antic en bon estat"),
+                new OdontogramPreset(1L, 36L, 5L, 3L, false, "Desgast oclusal lleu"),
+
+                // PACIENTE 2 - Laia
+                new OdontogramPreset(2L, 11L, 1L, 1L, false, "Petita càries vestibular"),
+                new OdontogramPreset(2L, 21L, 1L, 4L, false, "Taca / lesió a revisar"),
+                new OdontogramPreset(2L, 46L, 5L, 3L, true, "Reconstrucció oclusal prèvia"),
+
+                // PACIENTE 3 - Pol
+                new OdontogramPreset(3L, 14L, 3L, 1L, false, "Càries interproximal"),
+                new OdontogramPreset(3L, 24L, 4L, 1L, false, "Càries interproximal"),
+                new OdontogramPreset(3L, 31L, 1L, 5L, false, "Fractura petita en vora incisal"),
+
+                // PACIENTE 4 - Anna
+                new OdontogramPreset(4L, 37L, 5L, 2L, true, "Obtura antiga"),
+                new OdontogramPreset(4L, 47L, 5L, 1L, false, "Càries oclusal"),
+                new OdontogramPreset(4L, 12L, 1L, 4L, false, "Lesió blanca a controlar"),
+
+                // PACIENTE 5 - Judit
+                new OdontogramPreset(5L, 22L, 2L, 1L, false, "Càries palatina"),
+                new OdontogramPreset(5L, 35L, 5L, 3L, false, "Desgast oclusal moderat"),
+                new OdontogramPreset(5L, 45L, 5L, 2L, true, "Empastament en molar inferior")
+        );
+
+        for (OdontogramPreset op : preset) {
+
+            Patient patient = patientById.get(op.patientId);
+            Tooth tooth = toothById.get(op.toothId);
+            Side side = sideById.get(op.sideId);
+            Pathology pathology = pathologyById.get(op.pathologyId);
+
+            if (patient != null && tooth != null && side != null && pathology != null) {
+
+                boolean exists = odontogramRepository.existsByPatientIdAndToothIdAndSideIdAndPathologyId(
+                        op.patientId,
+                        op.toothId,
+                        op.sideId,
+                        op.pathologyId
+                );
+
+                if (!exists) {
+                    Odontogram odontogram = new Odontogram();
+                    odontogram.setPatient(patient);
+                    odontogram.setTooth(tooth);
+                    odontogram.setSide(side);
+                    odontogram.setPathology(pathology);
+                    odontogram.setTreated(op.treated);
+                    odontogram.setNote(op.note);
+
+                    odontogramRepository.save(odontogram);
                 }
             }
         }
