@@ -13,5 +13,10 @@ public interface OdontogramRepository extends JpaRepository<Odontogram, Long> {
 	List<Odontogram>findByPatientId(Long patientId);
     List<Odontogram> findByPatientIdAndToothId(Long patientId, Long toothId);
     List<Odontogram> findByPatientIdAndToothIdAndSideId(Long patientId, Long toothId, Long sideId);
-	
+    boolean existsByPatientIdAndToothIdAndSideIdAndPathologyId(
+            Long patientId,
+            Long toothId,
+            Long sideId,
+            Long pathologyId
+    );
 }

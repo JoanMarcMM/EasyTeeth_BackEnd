@@ -26,6 +26,8 @@ public class DataInitializer {
             seedServiceTest.seedPatientsIfMissing();
             seedServiceTest.seedOdontologistsIfMissing();
             seedServiceTest.seedAppointmentsIfMissing();
+            
+            seedServiceTest.seedOdontogramsIfMissing();
         };
     }
 }
