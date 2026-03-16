@@ -39,4 +39,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("end") LocalDateTime end,
             @Param("boxId") Long boxId
     );
+    void deleteByPatientId(Long patientId);
 }
