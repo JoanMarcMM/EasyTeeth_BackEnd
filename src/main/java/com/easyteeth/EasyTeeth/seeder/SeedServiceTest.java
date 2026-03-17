@@ -10,8 +10,8 @@ import java.util.*;
 
 @Service
 public class SeedServiceTest {
-	
-	private final UserRepository userRepository;
+
+    private final UserRepository userRepository;
     private final ToothRepository toothRepository;
     private final SideRepository sideRepository;
     private final BoxRepository boxRepository;
@@ -23,51 +23,50 @@ public class SeedServiceTest {
     private final TreatmentUtensilRepository treatmentUtensilRepository;
     private final SpecialityRepository specialityRepository;
     private final AvailabilityRepository availabilityRepository;
-	private final PatientRepository patientRepository;
-	private final OdontologistRepository odontologistRepository;
-	private final AppointmentRepository appointmentRepository;
-	private final OdontogramRepository odontogramRepository;
-	private final BackgroundRepository backgroundRepository;
+    private final PatientRepository patientRepository;
+    private final OdontologistRepository odontologistRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final OdontogramRepository odontogramRepository;
+    private final BackgroundRepository backgroundRepository;
 
-	public SeedServiceTest(
-	        UserRepository userRepository,
-	        ToothRepository toothRepository,
-	        SideRepository sideRepository,
-	        BoxRepository boxRepository,
-	        StorageRepository storageRepository,
-	        PathologyRepository pathologyRepository,
-	        TreatmentRepository treatmentRepository,
-	        SupplierRepository supplierRepository,
-	        UtensilRepository utensilRepository,
-	        TreatmentUtensilRepository treatmentUtensilRepository,
-	        SpecialityRepository specialityRepository,
-	        AvailabilityRepository availabilityRepository,
-	        PatientRepository patientRepository,
-	        OdontologistRepository odontologistRepository,
-	        AppointmentRepository appointmentRepository,
-	        OdontogramRepository odontogramRepository,
-	        BackgroundRepository backgroundRepository
-	) {
-	    this.userRepository = userRepository;
-	    this.toothRepository = toothRepository;
-	    this.sideRepository = sideRepository;
-	    this.boxRepository = boxRepository;
-	    this.storageRepository = storageRepository;
-	    this.pathologyRepository = pathologyRepository;
-	    this.treatmentRepository = treatmentRepository;
-	    this.supplierRepository = supplierRepository;
-	    this.utensilRepository = utensilRepository;
-	    this.treatmentUtensilRepository = treatmentUtensilRepository;
-	    this.specialityRepository = specialityRepository;
-	    this.availabilityRepository = availabilityRepository;
-	    this.patientRepository = patientRepository;
-	    this.odontologistRepository = odontologistRepository;
-	    this.appointmentRepository = appointmentRepository;
-	    this.odontogramRepository = odontogramRepository;
-	    this.backgroundRepository = backgroundRepository;
-	}
-    
-    
+    public SeedServiceTest(
+            UserRepository userRepository,
+            ToothRepository toothRepository,
+            SideRepository sideRepository,
+            BoxRepository boxRepository,
+            StorageRepository storageRepository,
+            PathologyRepository pathologyRepository,
+            TreatmentRepository treatmentRepository,
+            SupplierRepository supplierRepository,
+            UtensilRepository utensilRepository,
+            TreatmentUtensilRepository treatmentUtensilRepository,
+            SpecialityRepository specialityRepository,
+            AvailabilityRepository availabilityRepository,
+            PatientRepository patientRepository,
+            OdontologistRepository odontologistRepository,
+            AppointmentRepository appointmentRepository,
+            OdontogramRepository odontogramRepository,
+            BackgroundRepository backgroundRepository
+    ) {
+        this.userRepository = userRepository;
+        this.toothRepository = toothRepository;
+        this.sideRepository = sideRepository;
+        this.boxRepository = boxRepository;
+        this.storageRepository = storageRepository;
+        this.pathologyRepository = pathologyRepository;
+        this.treatmentRepository = treatmentRepository;
+        this.supplierRepository = supplierRepository;
+        this.utensilRepository = utensilRepository;
+        this.treatmentUtensilRepository = treatmentUtensilRepository;
+        this.specialityRepository = specialityRepository;
+        this.availabilityRepository = availabilityRepository;
+        this.patientRepository = patientRepository;
+        this.odontologistRepository = odontologistRepository;
+        this.appointmentRepository = appointmentRepository;
+        this.odontogramRepository = odontogramRepository;
+        this.backgroundRepository = backgroundRepository;
+    }
+
     private static final List<Patient> PRESET_PATIENTS = List.of(
             new Patient("Marc", "Garcia", "Lopez", "12345678901", "12345678A"),
             new Patient("Laia", "Martinez", "Soler", "12345678902", "12345678B"),
@@ -90,7 +89,7 @@ public class SeedServiceTest {
             }
         }
     }
-    
+
     @Transactional
     public void seedOdontologistsIfMissing() {
 
@@ -164,7 +163,7 @@ public class SeedServiceTest {
             }
         }
     }
-    
+
     @Transactional
     public void seedAppointmentsIfMissing() {
 
@@ -243,7 +242,7 @@ public class SeedServiceTest {
             }
         }
     }
-    
+
     @Transactional
     public void seedOdontogramsIfMissing() {
 
@@ -287,29 +286,38 @@ public class SeedServiceTest {
 
         List<OdontogramPreset> preset = List.of(
                 // PACIENTE 1 - Marc
-                new OdontogramPreset(1L, 16L, 1L, 1L, false, "Càries incipient a cara vestibular"),
-                new OdontogramPreset(1L, 26L, 2L, 2L, true, "Empastament antic en bon estat"),
-                new OdontogramPreset(1L, 36L, 5L, 3L, false, "Desgast oclusal lleu"),
+                new OdontogramPreset(1L, 16L, 5L, 10L, false, "Sellat de fissures en molar"),
+                new OdontogramPreset(1L, 26L, 3L, 2L, false, "Càries proximal pendent"),
+                new OdontogramPreset(1L, 36L, 5L, 1L, true, "Obturació oclusal feta"),
+                new OdontogramPreset(1L, 46L, 4L, 9L, false, "Càries radiogràfica distal"),
 
                 // PACIENTE 2 - Laia
-                new OdontogramPreset(2L, 11L, 1L, 1L, false, "Petita càries vestibular"),
-                new OdontogramPreset(2L, 21L, 1L, 4L, false, "Taca / lesió a revisar"),
-                new OdontogramPreset(2L, 46L, 5L, 3L, true, "Reconstrucció oclusal prèvia"),
+                new OdontogramPreset(2L, 11L, 1L, 4L, false, "Fractura petita vestibular"),
+                new OdontogramPreset(2L, 21L, 3L, 2L, false, "Càries proximal mesial"),
+                new OdontogramPreset(2L, 22L, 4L, 2L, false, "Càries proximal distal"),
+                new OdontogramPreset(2L, 26L, 5L, 10L, false, "Sellat de fissures"),
+                new OdontogramPreset(2L, 48L, 5L, 5L, false, "Desgast oclusal"),
 
                 // PACIENTE 3 - Pol
-                new OdontogramPreset(3L, 14L, 3L, 1L, false, "Càries interproximal"),
-                new OdontogramPreset(3L, 24L, 4L, 1L, false, "Càries interproximal"),
-                new OdontogramPreset(3L, 31L, 1L, 5L, false, "Fractura petita en vora incisal"),
+                new OdontogramPreset(3L, 14L, 3L, 2L, false, "Càries proximal"),
+                new OdontogramPreset(3L, 24L, 4L, 2L, false, "Càries proximal"),
+                new OdontogramPreset(3L, 31L, 1L, 4L, false, "Fractura dental"),
+                new OdontogramPreset(3L, 36L, 5L, 7L, false, "Pulpitis"),
+                new OdontogramPreset(3L, 37L, 5L, 11L, false, "Absència natural"),
 
                 // PACIENTE 4 - Anna
-                new OdontogramPreset(4L, 37L, 5L, 2L, true, "Obtura antiga"),
+                new OdontogramPreset(4L, 12L, 1L, 3L, false, "Càries cervical"),
+                new OdontogramPreset(4L, 16L, 5L, 10L, false, "Sellat de fissures"),
                 new OdontogramPreset(4L, 47L, 5L, 1L, false, "Càries oclusal"),
-                new OdontogramPreset(4L, 12L, 1L, 4L, false, "Lesió blanca a controlar"),
+                new OdontogramPreset(4L, 27L, 4L, 9L, false, "Càries radiogràfica"),
+                new OdontogramPreset(4L, 46L, 5L, 1L, true, "Empastament fet"),
 
                 // PACIENTE 5 - Judit
-                new OdontogramPreset(5L, 22L, 2L, 1L, false, "Càries palatina"),
-                new OdontogramPreset(5L, 35L, 5L, 3L, false, "Desgast oclusal moderat"),
-                new OdontogramPreset(5L, 45L, 5L, 2L, true, "Empastament en molar inferior")
+                new OdontogramPreset(5L, 22L, 2L, 3L, false, "Càries cervical palatina"),
+                new OdontogramPreset(5L, 35L, 5L, 5L, false, "Desgast oclusal moderat"),
+                new OdontogramPreset(5L, 45L, 5L, 1L, true, "Obturació oclusal feta"),
+                new OdontogramPreset(5L, 55L, 5L, 10L, false, "Sellat temporal"),
+                new OdontogramPreset(5L, 64L, 3L, 9L, false, "Càries radiogràfica temporal")
         );
 
         for (OdontogramPreset op : preset) {
@@ -342,7 +350,7 @@ public class SeedServiceTest {
             }
         }
     }
-    
+
     @Transactional
     public void seedBackgroundsIfMissing() {
 
@@ -471,6 +479,4 @@ public class SeedServiceTest {
             }
         }
     }
-
-   
 }
