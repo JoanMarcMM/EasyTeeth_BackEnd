@@ -217,16 +217,17 @@ public class SeedService {
     }
 
     private static final List<Pathology> PRESET_PATHOLOGY = List.of(
-            new Pathology("Càries inicial"),
-            new Pathology("Càries superficial"),
-            new Pathology("Càries mitjana"),
-            new Pathology("Càries profunda"),
-            new Pathology("Pulpitis reversible"),
-            new Pathology("Pulpitis irreversible"),
-            new Pathology("Necrosi pulpar"),
-            new Pathology("Abscés periapical"),
-            new Pathology("Hipersensibilitat dentinària"),
-            new Pathology("Síndrome del queixal esquerdat")
+            new Pathology("Càries oclusal"),
+            new Pathology("Càries proximal"),
+            new Pathology("Càries cervical"),
+            new Pathology("Fractura dental"),
+            new Pathology("Desgast oclusal"),
+            new Pathology("Lesió periapical"),
+            new Pathology("Pulpitis"),
+            new Pathology("Abscés"),
+            new Pathology("Càries radiogràfica"),
+            new Pathology("Sellat de fosses i fissures"),
+            new Pathology("Absència natural")
     );
 
     @Transactional
@@ -237,18 +238,69 @@ public class SeedService {
             treatmentByName.put(tr.getName(), tr);
         }
 
-        Map<String, List<String>> relations = Map.of(
-                "Càries inicial", List.of("Diagnòstic i exploració", "Obturació simple (empastament)", "Revisió i control"),
-                "Càries superficial", List.of("Diagnòstic i exploració", "Obturació simple (empastament)"),
-                "Càries mitjana", List.of("Diagnòstic i exploració", "Obturació complexa", "Reconstrucció dental"),
-                "Càries profunda", List.of("Diagnòstic i exploració", "Endodòncia unirradicular", "Reconstrucció dental"),
-                "Pulpitis reversible", List.of("Diagnòstic i exploració", "Obturació simple (empastament)", "Revisió i control"),
-                "Pulpitis irreversible", List.of("Endodòncia unirradicular", "Reconstrucció dental"),
-                "Necrosi pulpar", List.of("Endodòncia multirradicular", "Reconstrucció dental"),
-                "Abscés periapical", List.of("Endodòncia unirradicular", "Revisió i control"),
-                "Hipersensibilitat dentinària", List.of("Diagnòstic i exploració", "Revisió i control", "Poliment i fluorització"),
-                "Síndrome del queixal esquerdat", List.of("Diagnòstic i exploració", "Reconstrucció dental", "Endodòncia unirradicular")
-        );
+        Map<String, List<String>> relations = Map.ofEntries(
+        	    Map.entry("Càries oclusal", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Radiografia periapical",
+        	            "Obturació simple (empastament)",
+        	            "Revisió i control"
+        	    )),
+        	    Map.entry("Càries proximal", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Radiografia periapical",
+        	            "Obturació complexa",
+        	            "Reconstrucció dental"
+        	    )),
+        	    Map.entry("Càries cervical", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Obturació simple (empastament)",
+        	            "Poliment i fluorització"
+        	    )),
+        	    Map.entry("Fractura dental", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Radiografia periapical",
+        	            "Reconstrucció dental"
+        	    )),
+        	    Map.entry("Desgast oclusal", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Revisió i control",
+        	            "Fèrula de descàrrega"
+        	    )),
+        	    Map.entry("Lesió periapical", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Radiografia periapical",
+        	            "Endodòncia unirradicular",
+        	            "Revisió i control"
+        	    )),
+        	    Map.entry("Pulpitis", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Radiografia periapical",
+        	            "Endodòncia unirradicular",
+        	            "Reconstrucció dental"
+        	    )),
+        	    Map.entry("Abscés", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Radiografia periapical",
+        	            "Endodòncia multirradicular",
+        	            "Revisió i control"
+        	    )),
+        	    Map.entry("Càries radiogràfica", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Radiografia periapical",
+        	            "Obturació simple (empastament)",
+        	            "Obturació complexa"
+        	    )),
+        	    Map.entry("Sellat de fosses i fissures", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Sellat de fissures",
+        	            "Revisió i control"
+        	    )),
+        	    Map.entry("Absència natural", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Radiografia periapical",
+        	            "Revisió i control"
+        	    ))
+        	);
 
         for (Pathology p : PRESET_PATHOLOGY) {
 
@@ -448,6 +500,7 @@ public class SeedService {
         linker.link("Blanquejament dental", "Gafes de protecció", "i-vo", 2);
         linker.link("Blanquejament dental", "Càmera intraoral", "VistaCam iX", 1);
     }
+
     private static final List<Speciality> PRESET_SPECIALITIES = List.of(
             new Speciality(null, "Odontologia general"),
             new Speciality(null, "Endodòncia"),
@@ -541,7 +594,6 @@ public class SeedService {
 
                     if (!speciality.getTreatments().contains(treatment)) {
                         speciality.getTreatments().add(treatment);
-                        
                     }
                 }
             }
@@ -549,33 +601,40 @@ public class SeedService {
             specialityRepository.save(speciality);
         }
     }
-    
+
     private static final List<Availability> PRESET_AVAILABILITY = List.of(
-            new Availability("MONDAY",true,false),
-            new Availability("MONDAY",false,true),
-            
-            
-            new Availability("TUESDAY",true,false),
-            new Availability("TUESDAY",false,true),
-            
-            new Availability("WEDNESDAY",true,false),
-            new Availability("WEDNESDAY",false,true),
-            
-            new Availability("THURSDAY",true,false),
-            new Availability("THURSDAY",false,true),
-            
-            new Availability("FRIDAY",true,false),
-            new Availability("FRIDAY",false,true),
-            
-            new Availability("SATURDAY",true,false),
-            new Availability("SATURDAY",false,true)
+            new Availability("MONDAY", true, false),
+            new Availability("MONDAY", false, true),
+
+            new Availability("TUESDAY", true, false),
+            new Availability("TUESDAY", false, true),
+
+            new Availability("WEDNESDAY", true, false),
+            new Availability("WEDNESDAY", false, true),
+
+            new Availability("THURSDAY", true, false),
+            new Availability("THURSDAY", false, true),
+
+            new Availability("FRIDAY", true, false),
+            new Availability("FRIDAY", false, true),
+
+            new Availability("SATURDAY", true, false),
+            new Availability("SATURDAY", false, true)
     );
 
     @Transactional
     public void seedAvailabilityIfMissing() {
         for (Availability a : PRESET_AVAILABILITY) {
-            if (!availabilityRepository.existsByDayOfWeekAndMorningAndAfternoon(a.getDayOfWeek(),a.isMorning(),a.isAfternoon())) {
-                availabilityRepository.save(new Availability(a.getDayOfWeek(),a.isMorning(),a.isAfternoon()));
+            if (!availabilityRepository.existsByDayOfWeekAndMorningAndAfternoon(
+                    a.getDayOfWeek(),
+                    a.isMorning(),
+                    a.isAfternoon()
+            )) {
+                availabilityRepository.save(new Availability(
+                        a.getDayOfWeek(),
+                        a.isMorning(),
+                        a.isAfternoon()
+                ));
             }
         }
     }
