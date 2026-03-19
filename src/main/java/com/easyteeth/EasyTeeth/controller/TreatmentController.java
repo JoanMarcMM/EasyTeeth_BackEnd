@@ -43,14 +43,11 @@ public class TreatmentController {
     }
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Optional<Treatment>> getTreatment(@PathVariable("id") Long idTreatment)
-			throws IOException {
-		Optional<Treatment> treatment = treatmentRepository.findById(idTreatment);
-		if (treatment.isPresent()) {
-			return ResponseEntity.ok(treatment);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+	public ResponseEntity<Treatment> getTreatment(@PathVariable Long id) {
+
+	    return treatmentRepository.findByIdWithSpecialities(id)
+	        .map(ResponseEntity::ok)
+	        .orElse(ResponseEntity.notFound().build());
 	}
 
 	@GetMapping("/index")
