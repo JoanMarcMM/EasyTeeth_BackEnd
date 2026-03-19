@@ -38,7 +38,6 @@ public class Treatment {
     private Set<Pathology> pathologies = new HashSet<>();
 
     @ManyToMany(mappedBy = "treatments")
-    
     private Set<Speciality> specialities = new HashSet<>();
 
     @OneToMany(mappedBy = "treatment", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -121,7 +120,22 @@ public class Treatment {
 	    this.treatmentUtensils.add(tu);
 	    utensil.getTreatmentUtensils().add(tu);
 	}
-	
+	public Set<Speciality> getSpecialities() {
+	    return specialities;
+	}
+
+	public void setSpecialities(Set<Speciality> specialities) {
+	    this.specialities = specialities;
+	}
+	public void addSpeciality(Speciality speciality) {
+	    this.specialities.add(speciality);
+	    speciality.getTreatments().add(this);
+	}
+
+	public void removeSpeciality(Speciality speciality) {
+	    this.specialities.remove(speciality);
+	    speciality.getTreatments().remove(this);
+	}
 	
 	
 }
