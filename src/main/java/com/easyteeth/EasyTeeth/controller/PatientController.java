@@ -3,13 +3,11 @@ package com.easyteeth.EasyTeeth.controller;
 import com.easyteeth.EasyTeeth.model.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,165 +17,198 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/patient")
-
 public class PatientController {
 
-	@Autowired
-	private PatientRepository patientRepository;
-	@Autowired
-	private BackgroundRepository backgroundRepository;
+    @Autowired
+    private PatientRepository patientRepository;
 
-	@Autowired
-	private OdontogramRepository odontogramRepository;
+    @Autowired
+    private BackgroundRepository backgroundRepository;
 
-	@Autowired
-	private AppointmentRepository appointmentRepository;
-	@Autowired
-	private DocumentRepository documentRepository;
+    @Autowired
+    private OdontogramRepository odontogramRepository;
 
-	@Autowired
-	private ImageRepository imageRepository;
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
-	
+    @Autowired
+    private DocumentRepository documentRepository;
 
-	@PostMapping("/new")
-	public ResponseEntity<?> createPatient(@RequestBody PatientRequest req) {
-	    try {
-	        
-	        if (req == null ||
-	            req.getName() == null || req.getName().trim().isEmpty() ||
-	            req.getLastname1() == null || req.getLastname1().trim().isEmpty() ||
-	            req.getLastname2() == null || req.getLastname2().trim().isEmpty() ||
-	            req.getSsn() == null || req.getSsn().trim().isEmpty() ||
-	            req.getDni() == null || req.getDni().trim().isEmpty()) {
+    @Autowired
+    private ImageRepository imageRepository;
 
-	            return ResponseEntity.badRequest().body("Faltan campos obligatorios");
-	        }
-	                
-	        
-	        Patient p = new Patient();
-	        p.setName(req.getName().trim());
-	        p.setLastname1(req.getLastname1().trim());
-	        p.setLastname2(req.getLastname2().trim());
-	        p.setSsn(req.getSsn().trim());
-	        p.setDni(req.getDni().trim());
+    @PostMapping("/new")
+    public ResponseEntity<?> createPatient(@RequestBody PatientRequest req) {
+        try {
 
+            if (req == null ||
+                req.getName() == null || req.getName().trim().isEmpty() ||
+                req.getLastname1() == null || req.getLastname1().trim().isEmpty() ||
+                req.getLastname2() == null || req.getLastname2().trim().isEmpty() ||
+                req.getSsn() == null || req.getSsn().trim().isEmpty() ||
+                req.getDni() == null || req.getDni().trim().isEmpty()) {
 
-	        Patient saved = patientRepository.save(p);
-	        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+                return ResponseEntity.badRequest().body("Faltan campos obligatorios");
+            }
 
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno");
-	    }
-	}
+            Patient p = new Patient();
+            p.setName(req.getName().trim());
+            p.setLastname1(req.getLastname1().trim());
+            p.setLastname2(req.getLastname2().trim());
+            p.setSsn(req.getSsn().trim());
+            p.setDni(req.getDni().trim());
 
-	
+            if (req.getPhoneNumber() != null) {
+                p.setPhoneNumber(req.getPhoneNumber().trim());
+            }
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Optional<Patient>> getPatient(@PathVariable("id") Long idPatient) throws IOException {
-		Optional<Patient> patient = patientRepository.findById(idPatient);
-		if (patient.isPresent()) {
-			return ResponseEntity.ok(patient);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
+            if (req.getEmail() != null) {
+                p.setEmail(req.getEmail().trim());
+            }
 
-	@Transactional
-	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deletePatient(@PathVariable long id) {
-	    try {
-	        if (!patientRepository.existsById(id)) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
-	        }
+            if (req.getBillingAddress() != null) {
+                p.setBillingAddress(req.getBillingAddress().trim());
+            }
 
-	        backgroundRepository.deleteByPatientId(id);
-	        imageRepository.deleteByPatientId(id);
-	        documentRepository.deleteByPatientId(id);
-	        odontogramRepository.deleteByPatientId(id);
-	        appointmentRepository.deleteByPatientId(id);
-	        patientRepository.deleteById(id);
+            if (req.getBankAccountNumber() != null) {
+                p.setBankAccountNumber(req.getBankAccountNumber().trim());
+            }
 
-	        return ResponseEntity.noContent().build();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
-	}
+            if (req.getTaxIdentificationNumber() != null) {
+                p.setTaxIdentificationNumber(req.getTaxIdentificationNumber().trim());
+            }
 
-	@GetMapping("/index")
-	public ResponseEntity<List<Patient>> getAll() throws IOException {
-		List<Patient> patients = patientRepository.findAll();
-		return ResponseEntity.ok(patients);
-	}
+            Patient saved = patientRepository.save(p);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
 
-	@PutMapping("/{id}")
-	public ResponseEntity<?> updateAppointment(@PathVariable Long id,
-	                                          @RequestBody PatientRequest body) {
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno");
+        }
+    }
 
-	    Patient db = patientRepository.findById(id).orElse(null);
-	    if (db == null) return ResponseEntity.notFound().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<Patient> getPatient(@PathVariable("id") Long idPatient) throws IOException {
+        Optional<Patient> patient = patientRepository.findById(idPatient);
+        if (patient.isPresent()) {
+            return ResponseEntity.ok(patient.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-	    if (body.getName() != null && !body.getName().trim().isEmpty()) {
-	        db.setName(body.getName().trim());
-	    }
-	    
-	    if (body.getLastname1() != null && !body.getLastname1().trim().isEmpty()) {
-	        db.setLastname1(body.getLastname1().trim());
-	    }
-	    
-	    if (body.getLastname2() != null && !body.getLastname2().trim().isEmpty()) {
-	        db.setLastname2(body.getLastname2().trim());
-	    }
-	    
-	    if (body.getSsn() != null && !body.getSsn().trim().isEmpty()) {
-	        db.setSsn(body.getSsn().trim());
-	    }
-	    
-	    if (body.getDni() != null && !body.getDni().trim().isEmpty()) {
-	        db.setDni(body.getDni().trim());
-	    }
+    @Transactional
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePatient(@PathVariable long id) {
+        try {
+            if (!patientRepository.existsById(id)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+            }
 
-	    return ResponseEntity.ok(patientRepository.save(db));
-	}
+            backgroundRepository.deleteByPatientId(id);
+            imageRepository.deleteByPatientId(id);
+            documentRepository.deleteByPatientId(id);
+            odontogramRepository.deleteByPatientId(id);
+            appointmentRepository.deleteByPatientId(id);
+            patientRepository.deleteById(id);
 
-	@GetMapping("/name/{name}")
-	public ResponseEntity<List<Patient>> findByName(@PathVariable("name") String name) {
-		List<Patient> patients = patientRepository.findByNameContainingIgnoreCase(name);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
-		if (patients.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		} else {
-			return ResponseEntity.ok(patients);
-		}
-	}
+    @GetMapping("/index")
+    public ResponseEntity<List<Patient>> getAll() throws IOException {
+        List<Patient> patients = patientRepository.findAll();
+        return ResponseEntity.ok(patients);
+    }
 
-	@GetMapping("/dni/{dni}")
-	public ResponseEntity<List<Patient>> findByDni(@PathVariable("dni") String dni) {
-		List<Patient> patients = patientRepository.findByDniContainingIgnoreCase(dni);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateAppointment(@PathVariable Long id,
+                                               @RequestBody PatientRequest body) {
 
-		if (patients.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		} else {
-			return ResponseEntity.ok(patients);
-		}
-	}
+        Patient db = patientRepository.findById(id).orElse(null);
+        if (db == null) return ResponseEntity.notFound().build();
 
-	@GetMapping("/ssn/{ssn}")
-	public ResponseEntity<List<Patient>> findBySsn(@PathVariable("ssn") String ssn) {
-		List<Patient> patients = patientRepository.findBySsnContainingIgnoreCase(ssn);
+        if (body.getName() != null && !body.getName().trim().isEmpty()) {
+            db.setName(body.getName().trim());
+        }
 
-		if (patients.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		} else {
-			return ResponseEntity.ok(patients);
-		}
-	}
+        if (body.getLastname1() != null && !body.getLastname1().trim().isEmpty()) {
+            db.setLastname1(body.getLastname1().trim());
+        }
 
+        if (body.getLastname2() != null && !body.getLastname2().trim().isEmpty()) {
+            db.setLastname2(body.getLastname2().trim());
+        }
+
+        if (body.getSsn() != null && !body.getSsn().trim().isEmpty()) {
+            db.setSsn(body.getSsn().trim());
+        }
+
+        if (body.getDni() != null && !body.getDni().trim().isEmpty()) {
+            db.setDni(body.getDni().trim());
+        }
+
+        if (body.getPhoneNumber() != null && !body.getPhoneNumber().trim().isEmpty()) {
+            db.setPhoneNumber(body.getPhoneNumber().trim());
+        }
+
+        if (body.getEmail() != null && !body.getEmail().trim().isEmpty()) {
+            db.setEmail(body.getEmail().trim());
+        }
+
+        if (body.getBillingAddress() != null && !body.getBillingAddress().trim().isEmpty()) {
+            db.setBillingAddress(body.getBillingAddress().trim());
+        }
+
+        if (body.getBankAccountNumber() != null && !body.getBankAccountNumber().trim().isEmpty()) {
+            db.setBankAccountNumber(body.getBankAccountNumber().trim());
+        }
+
+        if (body.getTaxIdentificationNumber() != null && !body.getTaxIdentificationNumber().trim().isEmpty()) {
+            db.setTaxIdentificationNumber(body.getTaxIdentificationNumber().trim());
+        }
+
+        return ResponseEntity.ok(patientRepository.save(db));
+    }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<Patient>> findByName(@PathVariable("name") String name) {
+        List<Patient> patients = patientRepository.findByNameContainingIgnoreCase(name);
+
+        if (patients.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(patients);
+        }
+    }
+
+    @GetMapping("/dni/{dni}")
+    public ResponseEntity<List<Patient>> findByDni(@PathVariable("dni") String dni) {
+        List<Patient> patients = patientRepository.findByDniContainingIgnoreCase(dni);
+
+        if (patients.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(patients);
+        }
+    }
+
+    @GetMapping("/ssn/{ssn}")
+    public ResponseEntity<List<Patient>> findBySsn(@PathVariable("ssn") String ssn) {
+        List<Patient> patients = patientRepository.findBySsnContainingIgnoreCase(ssn);
+
+        if (patients.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(patients);
+        }
+    }
 }

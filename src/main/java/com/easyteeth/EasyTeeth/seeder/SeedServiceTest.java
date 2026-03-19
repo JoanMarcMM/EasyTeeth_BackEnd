@@ -68,23 +68,47 @@ public class SeedServiceTest {
     }
 
     private static final List<Patient> PRESET_PATIENTS = List.of(
-            new Patient("Marc", "Garcia", "Lopez", "12345678901", "12345678A"),
-            new Patient("Laia", "Martinez", "Soler", "12345678902", "12345678B"),
-            new Patient("Pol", "Fernandez", "Ruiz", "12345678903", "12345678C"),
-            new Patient("Anna", "Torres", "Vila", "12345678904", "12345678D"),
-            new Patient("Judit", "Navarro", "Pons", "12345678905", "12345678E")
-    );
+    	    new Patient("Marc", "Garcia", "Lopez", "12345678901", "12345678A",
+    	        "+34600111221", "marc@example.com",
+    	        "Carrer Major 1, Barcelona",
+    	        "ES9121000418450200051332", "ES12345678A"),
+
+    	    new Patient("Laia", "Martinez", "Soler", "12345678902", "12345678B",
+    	        "+34600111222", "laia@example.com",
+    	        "Carrer Aragó 22, Barcelona",
+    	        "ES9121000418450200051333", "ES12345678B"),
+
+    	    new Patient("Pol", "Fernandez", "Ruiz", "12345678903", "12345678C",
+    	        "+34600111223", "pol@example.com",
+    	        "Carrer Balmes 45, Barcelona",
+    	        "ES9121000418450200051334", "ES12345678C"),
+
+    	    new Patient("Anna", "Torres", "Vila", "12345678904", "12345678D",
+    	        "+34600111224", "anna@example.com",
+    	        "Carrer Marina 78, Barcelona",
+    	        "ES9121000418450200051335", "ES12345678D"),
+
+    	    new Patient("Judit", "Navarro", "Pons", "12345678905", "12345678E",
+    	        "+34600111225", "judit@example.com",
+    	        "Carrer Diputació 100, Barcelona",
+    	        "ES9121000418450200051336", "ES12345678E")
+    	);
 
     @Transactional
     public void seedPatientsIfMissing() {
         for (Patient p : PRESET_PATIENTS) {
             if (!patientRepository.existsByDni(p.getDni())) {
                 patientRepository.save(new Patient(
-                        p.getName(),
-                        p.getLastname1(),
-                        p.getLastname2(),
-                        p.getSsn(),
-                        p.getDni()
+                    p.getName(),
+                    p.getLastname1(),
+                    p.getLastname2(),
+                    p.getSsn(),
+                    p.getDni(),
+                    p.getPhoneNumber(),
+                    p.getEmail(),
+                    p.getBillingAddress(),
+                    p.getBankAccountNumber(),
+                    p.getTaxIdentificationNumber()
                 ));
             }
         }
