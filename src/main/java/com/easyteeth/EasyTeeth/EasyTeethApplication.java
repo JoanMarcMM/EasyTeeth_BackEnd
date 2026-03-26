@@ -6,6 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /*
  * TO ACCESS SWAGGER USE THIS URL WHEN APP IS UP
  * http://localhost:8080/swagger-ui/index.html#/
+ * 
+ * TO ACCESS BACKOFFICE USE THIS URL WHEN APP IS UP
+ * http://localhost:8080/admin/login
  */
 
 @SpringBootApplication

@@ -54,4 +54,83 @@ public class UserController {
 		}
 	}
 
+	@PostMapping(value="/create", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<User> createUser(@RequestBody User user) {
+		// Validate that username and password aren't empty
+		if (user.getUsername() == null || user.getUsername().isEmpty() ||
+			user.getPassword() == null || user.getPassword().isEmpty()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+
+		try {
+			User savedUser = userRepository.save(user);
+			return ResponseEntity.ok(savedUser);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // Username might already exist
+		}
+	}
+
+	@GetMapping(value="/all", produces = "application/json")
+	public ResponseEntity<List<User>> getAllUsers() {
+		try {
+			List<User> users = userRepository.findAll();
+			return ResponseEntity.ok(users);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
+
+	@GetMapping(value="/{id}", produces = "application/json")
+	public ResponseEntity<User> getUserById(@PathVariable Long id) {
+		try {
+			Optional<User> user = userRepository.findById(id);
+			if (user.isPresent()) {
+				return ResponseEntity.ok(user.get());
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
+
+	@PutMapping(value="/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+		try {
+			Optional<User> user = userRepository.findById(id);
+			if (user.isPresent()) {
+				User existingUser = user.get();
+				
+				if (userDetails.getUsername() != null && !userDetails.getUsername().isEmpty()) {
+					existingUser.setUsername(userDetails.getUsername());
+				}
+				if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+					existingUser.setPassword(userDetails.getPassword());
+				}
+				
+				User updatedUser = userRepository.save(existingUser);
+				return ResponseEntity.ok(updatedUser);
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+		}
+	}
+
+	@DeleteMapping(value="/{id}")
+	public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+		try {
+			Optional<User> user = userRepository.findById(id);
+			if (user.isPresent()) {
+				userRepository.deleteById(id);
+				return ResponseEntity.noContent().build();
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 }

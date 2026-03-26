@@ -53,16 +53,17 @@ public class SeedService {
     }
 
     private static final List<User> PRESET_USERS = List.of(
-            new User("user1", "aula123"),
-            new User("user2", "aula123"),
-            new User("user3", "aula123")
+            new User("admin", "admin", true),
+            new User("user1", "aula123", false),
+            new User("user2", "aula123", false),
+            new User("user3", "aula123", false)
     );
 
     @Transactional
     public void seedUsersIfMissing() {
         for (User u : PRESET_USERS) {
             if (!userRepository.existsByUsername(u.getUsername())) {
-                userRepository.save(new User(u.getUsername(), u.getPassword()));
+                userRepository.save(new User(u.getUsername(), u.getPassword(), u.isAdmin()));
             }
         }
     }
