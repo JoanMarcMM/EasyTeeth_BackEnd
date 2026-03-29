@@ -218,17 +218,16 @@ public class SeedService {
     }
 
     private static final List<Pathology> PRESET_PATHOLOGY = List.of(
-            new Pathology("Càries oclusal"),
-            new Pathology("Càries proximal"),
-            new Pathology("Càries cervical"),
-            new Pathology("Fractura dental"),
-            new Pathology("Desgast oclusal"),
-            new Pathology("Lesió periapical"),
-            new Pathology("Pulpitis"),
-            new Pathology("Abscés"),
-            new Pathology("Càries radiogràfica"),
+            new Pathology("Càries"),
+            new Pathology("Càries Radiogràfica"),
             new Pathology("Sellat de fosses i fissures"),
-            new Pathology("Absència natural")
+            new Pathology("Absència Natural"),
+            new Pathology("Extracció"),
+            new Pathology("Endodòncia"),
+            new Pathology("Blanquejament"),
+            new Pathology("Erosió dental"),
+            new Pathology("Sensibilitat dental"),
+            new Pathology("Pigmentació")
     );
 
     @Transactional
@@ -240,52 +239,13 @@ public class SeedService {
         }
 
         Map<String, List<String>> relations = Map.ofEntries(
-        	    Map.entry("Càries oclusal", List.of(
+        	    Map.entry("Càries", List.of(
         	            "Diagnòstic i exploració",
         	            "Radiografia periapical",
         	            "Obturació simple (empastament)",
         	            "Revisió i control"
         	    )),
-        	    Map.entry("Càries proximal", List.of(
-        	            "Diagnòstic i exploració",
-        	            "Radiografia periapical",
-        	            "Obturació complexa",
-        	            "Reconstrucció dental"
-        	    )),
-        	    Map.entry("Càries cervical", List.of(
-        	            "Diagnòstic i exploració",
-        	            "Obturació simple (empastament)",
-        	            "Poliment i fluorització"
-        	    )),
-        	    Map.entry("Fractura dental", List.of(
-        	            "Diagnòstic i exploració",
-        	            "Radiografia periapical",
-        	            "Reconstrucció dental"
-        	    )),
-        	    Map.entry("Desgast oclusal", List.of(
-        	            "Diagnòstic i exploració",
-        	            "Revisió i control",
-        	            "Fèrula de descàrrega"
-        	    )),
-        	    Map.entry("Lesió periapical", List.of(
-        	            "Diagnòstic i exploració",
-        	            "Radiografia periapical",
-        	            "Endodòncia unirradicular",
-        	            "Revisió i control"
-        	    )),
-        	    Map.entry("Pulpitis", List.of(
-        	            "Diagnòstic i exploració",
-        	            "Radiografia periapical",
-        	            "Endodòncia unirradicular",
-        	            "Reconstrucció dental"
-        	    )),
-        	    Map.entry("Abscés", List.of(
-        	            "Diagnòstic i exploració",
-        	            "Radiografia periapical",
-        	            "Endodòncia multirradicular",
-        	            "Revisió i control"
-        	    )),
-        	    Map.entry("Càries radiogràfica", List.of(
+        	    Map.entry("Càries Radiogràfica", List.of(
         	            "Diagnòstic i exploració",
         	            "Radiografia periapical",
         	            "Obturació simple (empastament)",
@@ -296,9 +256,42 @@ public class SeedService {
         	            "Sellat de fissures",
         	            "Revisió i control"
         	    )),
-        	    Map.entry("Absència natural", List.of(
+        	    Map.entry("Absència Natural", List.of(
         	            "Diagnòstic i exploració",
         	            "Radiografia periapical",
+        	            "Revisió i control"
+        	    )),
+        	    Map.entry("Extracció", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Radiografia periapical",
+        	            "Extracció simple",
+        	            "Revisió i control"
+        	    )),
+        	    Map.entry("Endodòncia", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Radiografia periapical",
+        	            "Endodòncia unirradicular",
+        	            "Endodòncia multirradicular",
+        	            "Revisió i control"
+        	    )),
+        	    Map.entry("Blanquejament", List.of(
+        	            "Blanquejament dental"
+        	    )),
+        	    Map.entry("Erosió dental", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Obturació simple (empastament)",
+        	            "Poliment i fluorització",
+        	            "Revisió i control"
+        	    )),
+        	    Map.entry("Sensibilitat dental", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Poliment i fluorització",
+        	            "Revisió i control"
+        	    )),
+        	    Map.entry("Pigmentació", List.of(
+        	            "Diagnòstic i exploració",
+        	            "Neteja dental (profilaxi)",
+        	            "Poliment i fluorització",
         	            "Revisió i control"
         	    ))
         	);
