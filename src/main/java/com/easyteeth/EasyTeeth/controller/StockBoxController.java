@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,7 +28,6 @@ public class StockBoxController {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	@Autowired
 	private StockBoxRepository stockBoxRepository;
 	private UtensilRepository utensilRepository;
 	private BoxRepository boxRepository;
@@ -210,7 +208,7 @@ public class StockBoxController {
 			List<StockBox> stockBoxes = stockBoxRepository.findByBoxIdAndDay(boxId, day);
 			
 			if (stockBoxes.isEmpty()) {
-				return ResponseEntity.notFound().body("No se encontraron StockBox para el box " + boxId + " en la fecha " + day);
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron StockBox para el box " + boxId + " en la fecha " + day);
 			}
 
 			int updatedCount = 0;
