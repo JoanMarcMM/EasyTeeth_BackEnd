@@ -149,11 +149,23 @@ public class SeedServiceTest {
         }
 
         List<OdontologistPreset> preset = List.of(
+                // Odontologist 1: Monday & Tuesday (morning + afternoon)
                 new OdontologistPreset("Jordi", "Casas", "Ribas", "11111111A", "COL001", List.of(1L, 2L), List.of(1L, 2L, 3L, 4L)),
+                
+                // Odontologist 2: Wednesday & Thursday (morning + afternoon)
                 new OdontologistPreset("Marta", "Pujol", "Serra", "22222222B", "COL002", List.of(1L, 3L), List.of(5L, 6L, 7L, 8L)),
-                new OdontologistPreset("Anna", "Vidal", "Costa", "33333333C", "COL003", List.of(4L, 5L), List.of(1L, 2L, 9L, 10L)),
-                new OdontologistPreset("Pere", "Roca", "Mila", "44444444D", "COL004", List.of(6L), List.of(3L, 4L, 11L, 12L)),
-                new OdontologistPreset("Clara", "Font", "Duran", "55555555E", "COL005", List.of(7L, 1L), List.of(5L, 6L, 7L, 8L))
+                
+                // Odontologist 3: Thursday & Friday (morning + afternoon)
+                new OdontologistPreset("Anna", "Vidal", "Costa", "33333333C", "COL003", List.of(4L, 5L), List.of(7L, 8L, 9L, 10L)),
+                
+                // Odontologist 4: Friday & Saturday (morning + afternoon)
+                new OdontologistPreset("Pere", "Roca", "Mila", "44444444D", "COL004", List.of(6L), List.of(9L, 10L, 11L, 12L)),
+                
+                // Odontologist 5: Monday & Wednesday (morning + afternoon)
+                new OdontologistPreset("Clara", "Font", "Duran", "55555555E", "COL005", List.of(7L, 1L), List.of(1L, 2L, 5L, 6L)),
+                
+                // Odontologist 6: Tuesday & Saturday (morning + afternoon)
+                new OdontologistPreset("David", "Martín", "García", "66666666F", "COL006", List.of(2L, 3L), List.of(3L, 4L, 11L, 12L))
         );
 
         for (OdontologistPreset op : preset) {
@@ -230,29 +242,137 @@ public class SeedServiceTest {
         }
 
         List<AppointmentPreset> preset = List.of(
+                // Past appointments (March)
+                // Patient 1 (Marc) - has Càries (treatment 8), Sellat (treatment 7)
                 new AppointmentPreset("Primera visita", java.time.LocalDateTime.of(2026, 3, 10, 9, 0), 1L, 1L, 1L, 1L),
-                new AppointmentPreset("Revisió general", java.time.LocalDateTime.of(2026, 3, 10, 10, 0), 2L, 2L, 2L, 2L),
-                new AppointmentPreset("Empastament", java.time.LocalDateTime.of(2026, 3, 10, 11, 0), 3L, 3L, 1L, 8L),
-                new AppointmentPreset("Endodòncia", java.time.LocalDateTime.of(2026, 3, 11, 9, 30), 4L, 1L, 1L, 11L),
-                new AppointmentPreset("Neteja dental", java.time.LocalDateTime.of(2026, 3, 11, 12, 0), 5L, 4L, 3L, 5L)
+                new AppointmentPreset("Obturació", java.time.LocalDateTime.of(2026, 3, 10, 11, 0), 1L, 2L, 2L, 8L),
+                
+                // Patient 2 (Laia) - has Fractura (treatment 9), Sellat (treatment 7), Endodòncia (treatment 11)
+                new AppointmentPreset("Revisió general", java.time.LocalDateTime.of(2026, 3, 10, 10, 0), 2L, 1L, 3L, 2L),
+                new AppointmentPreset("Neteja dental", java.time.LocalDateTime.of(2026, 3, 11, 12, 0), 2L, 2L, 4L, 5L),
+                
+                // Patient 3 (Pol) - has Endodòncia (treatment 11), Sellat (treatment 7), Càries (treatment 8)
+                new AppointmentPreset("Endodòncia", java.time.LocalDateTime.of(2026, 3, 11, 9, 30), 3L, 1L, 5L, 11L),
+                
+                // Today (April 9, 2026)
+                // Patient 1 (Marc) - Sellat
+                new AppointmentPreset("Revisió de control", java.time.LocalDateTime.of(2026, 4, 9, 9, 0), 1L, 2L, 1L, 2L),
+                new AppointmentPreset("Sellat de fissures", java.time.LocalDateTime.of(2026, 4, 9, 14, 0), 1L, 1L, 2L, 7L),
+                
+                // Patient 2 (Laia) - Endodòncia
+                new AppointmentPreset("Neteja i poliment", java.time.LocalDateTime.of(2026, 4, 9, 10, 30), 2L, 2L, 3L, 6L),
+                
+                // Patient 3 (Pol) - Càries/Obturació
+                new AppointmentPreset("Obturació", java.time.LocalDateTime.of(2026, 4, 9, 12, 0), 3L, 1L, 4L, 8L),
+                
+                // Next few days (April 10-14)
+                // Patient 4 (Anna) - Sellat, Pigmentació
+                new AppointmentPreset("Diagnòstic i exploració", java.time.LocalDateTime.of(2026, 4, 10, 9, 0), 4L, 2L, 5L, 1L),
+                new AppointmentPreset("Sellat de fissures", java.time.LocalDateTime.of(2026, 4, 10, 15, 0), 4L, 1L, 6L, 7L),
+                
+                // Patient 5 (Judit) - Sellat, Endodòncia
+                new AppointmentPreset("Empastament dental", java.time.LocalDateTime.of(2026, 4, 10, 11, 0), 5L, 2L, 1L, 8L),
+                
+                // Patient 1 (Marc) - Revisió
+                new AppointmentPreset("Revisió i control", java.time.LocalDateTime.of(2026, 4, 11, 8, 30), 1L, 1L, 2L, 2L),
+                
+                // Patient 2 (Laia) - Endodòncia
+                new AppointmentPreset("Neteja dental profunda", java.time.LocalDateTime.of(2026, 4, 11, 10, 0), 2L, 2L, 3L, 5L),
+                new AppointmentPreset("Endodòncia unirradicular", java.time.LocalDateTime.of(2026, 4, 11, 13, 30), 2L, 1L, 4L, 11L),
+                
+                // Patient 3 (Pol) - Endodòncia, Sellat
+                new AppointmentPreset("Endodòncia multirradicular", java.time.LocalDateTime.of(2026, 4, 12, 11, 30), 3L, 2L, 5L, 12L),
+                
+                // Patient 4 (Anna) - Control
+                new AppointmentPreset("Anestèsia local", java.time.LocalDateTime.of(2026, 4, 12, 9, 0), 4L, 1L, 6L, 4L),
+                
+                // Patient 5 (Judit) - Sellat de fissures
+                new AppointmentPreset("Sellat de fissures", java.time.LocalDateTime.of(2026, 4, 12, 14, 0), 5L, 2L, 1L, 7L),
+                
+                // Patient 1 (Marc) - Pigmentació
+                new AppointmentPreset("Poliment i fluorització", java.time.LocalDateTime.of(2026, 4, 13, 12, 30), 1L, 1L, 2L, 6L),
+                
+                // Patient 2 (Laia) - Control
+                new AppointmentPreset("Diagnòstic radiogràfic", java.time.LocalDateTime.of(2026, 4, 13, 12, 30), 2L, 2L, 3L, 3L),
+                
+                // Patient 3 (Pol) - Càries follow-up
+                new AppointmentPreset("Curetaje periodontal", java.time.LocalDateTime.of(2026, 4, 13, 15, 0), 3L, 1L, 4L, 19L),
+                
+                // Patient 4 (Anna) - Pigmentació
+                new AppointmentPreset("Neteja dental", java.time.LocalDateTime.of(2026, 4, 14, 9, 0), 4L, 2L, 5L, 5L),
+                
+                // Patient 5 (Judit) - Endodòncia
+                new AppointmentPreset("Endodòncia unirradicular", java.time.LocalDateTime.of(2026, 4, 14, 11, 0), 5L, 1L, 6L, 11L),
+                
+                // Patient 1 (Marc) - Revisió general
+                new AppointmentPreset("Revisió general", java.time.LocalDateTime.of(2026, 4, 14, 16, 0), 1L, 2L, 1L, 2L),
+                
+                // Next week (April 15-20)
+                // Patient 2 (Laia) - Primera visita + Endodòncia
+                new AppointmentPreset("Primera visita diagnòstica", java.time.LocalDateTime.of(2026, 4, 15, 9, 30), 2L, 1L, 2L, 1L),
+                new AppointmentPreset("Empastament doble", java.time.LocalDateTime.of(2026, 4, 15, 14, 0), 2L, 2L, 3L, 8L),
+                
+                // Patient 3 (Pol) - Endodòncia multirradicular
+                new AppointmentPreset("Endodòncia multirradicular", java.time.LocalDateTime.of(2026, 4, 17, 10, 0), 3L, 1L, 4L, 12L),
+                
+                // Patient 4 (Anna) - Neteja
+                new AppointmentPreset("Neteja dental completa", java.time.LocalDateTime.of(2026, 4, 17, 15, 30), 4L, 2L, 5L, 5L),
+                
+                // Patient 5 (Judit) - Sellat + Revisió
+                new AppointmentPreset("Revisió i ajuste", java.time.LocalDateTime.of(2026, 4, 19, 9, 0), 5L, 1L, 6L, 2L),
+                new AppointmentPreset("Obturació complexa", java.time.LocalDateTime.of(2026, 4, 19, 13, 0), 5L, 2L, 1L, 8L),
+                
+                // Patient 1 (Marc) - Control post-trat
+                new AppointmentPreset("Control post-tractament", java.time.LocalDateTime.of(2026, 4, 20, 10, 30), 1L, 1L, 2L, 2L),
+                
+                // Patient 2 (Laia) - Desinfecció
+                new AppointmentPreset("Desinfecció endodòntica", java.time.LocalDateTime.of(2026, 4, 20, 15, 0), 2L, 2L, 3L, 13L),
+                
+                // May 2026 appointments
+                // Patient 1 (Marc) - Revisió mensual
+                new AppointmentPreset("Revisió mensual", java.time.LocalDateTime.of(2026, 5, 5, 9, 0), 1L, 1L, 4L, 2L),
+                new AppointmentPreset("Neteja profunda", java.time.LocalDateTime.of(2026, 5, 5, 11, 0), 1L, 2L, 5L, 5L),
+                
+                // Patient 2 (Laia) - Endodòncia maintenance
+                new AppointmentPreset("Empastament preventiu", java.time.LocalDateTime.of(2026, 5, 8, 10, 0), 2L, 1L, 6L, 8L),
+                
+                // Patient 3 (Pol) - Sellat de fissures
+                new AppointmentPreset("Sellat de fissures", java.time.LocalDateTime.of(2026, 5, 8, 14, 0), 3L, 2L, 1L, 7L),
+                
+                // Patient 4 (Anna) - Sellar
+                new AppointmentPreset("Sellat de fissures", java.time.LocalDateTime.of(2026, 5, 12, 9, 30), 4L, 1L, 2L, 7L),
+                
+                // Patient 5 (Judit) - Follow-up
+                new AppointmentPreset("Control post-extracció", java.time.LocalDateTime.of(2026, 5, 15, 10, 0), 5L, 2L, 3L, 2L),
+                
+                // Patient 1 (Marc) - Endodòncia follow-up
+                new AppointmentPreset("Endodòncia de urgència", java.time.LocalDateTime.of(2026, 5, 20, 14, 0), 1L, 1L, 4L, 11L),
+                
+                // Patient 2 (Laia) - Blanquejament
+                new AppointmentPreset("Blanquejament de manteniment", java.time.LocalDateTime.of(2026, 5, 25, 11, 0), 2L, 2L, 5L, 20L),
+                
+                // Patient 3 (Pol) - Revisió
+                new AppointmentPreset("Revisió mensual final", java.time.LocalDateTime.of(2026, 5, 30, 9, 0), 3L, 1L, 6L, 2L),
+                
+                // Patient 4 (Anna) - Neteja
+                new AppointmentPreset("Neteja i fluorització", java.time.LocalDateTime.of(2026, 5, 30, 16, 0), 4L, 2L, 1L, 6L)
         );
 
         for (AppointmentPreset ap : preset) {
-            Patient patient = patientById.get(ap.patientId);
-            Box box = boxById.get(ap.boxId);
-            Odontologist odontologist = odontologistById.get(ap.odontologistId);
-            Treatment treatment = treatmentById.get(ap.treatmentId);
+            boolean exists = appointmentRepository.findAll().stream().anyMatch(a ->
+                    a.getPatient().getId().equals(ap.patientId) &&
+                    a.getBox().getId().equals(ap.boxId) &&
+                    a.getOdontologist().getId().equals(ap.odontologistId) &&
+                    a.getTreatment().getId().equals(ap.treatmentId)
+            );
 
-            if (patient != null && box != null && odontologist != null && treatment != null) {
-
-                boolean exists = appointmentRepository.findAll().stream().anyMatch(a ->
-                        a.getPatient().getId().equals(ap.patientId) &&
-                        a.getBox().getId().equals(ap.boxId) &&
-                        a.getOdontologist().getId().equals(ap.odontologistId) &&
-                        a.getTreatment().getId().equals(ap.treatmentId)
-                );
-
-                if (!exists) {
+            if (!exists) {
+                Patient patient = patientById.get(ap.patientId);
+                Box box = boxById.get(ap.boxId);
+                Odontologist odontologist = odontologistById.get(ap.odontologistId);
+                Treatment treatment = treatmentById.get(ap.treatmentId);
+                
+                if (patient != null && box != null && odontologist != null && treatment != null) {
                     Appointment appointment = new Appointment();
                     appointment.setMotive(ap.motive);
                     appointment.setDate(ap.date);
@@ -265,6 +385,8 @@ public class SeedServiceTest {
                 }
             }
         }
+        
+        System.out.println("✓ Created/verified " + appointmentRepository.findAll().size() + " appointments");
     }
 
     @Transactional

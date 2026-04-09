@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,19 +56,22 @@ public class AppointmentController {
 	private BoxRepository boxRepository; 
 	private OdontologistRepository odontologistRepository;
 	private TreatmentRepository treatmentRepository;
+	private StockBoxRepository stockBoxRepository;
 	
 	public AppointmentController(
             AppointmentRepository appointmentRepository,
             PatientRepository patientRepository,
             BoxRepository boxRepository,
             OdontologistRepository odontologistRepository,
-            TreatmentRepository treatmentRepository
+            TreatmentRepository treatmentRepository,
+            StockBoxRepository stockBoxRepository
     ) {
         this.appointmentRepository = appointmentRepository;
         this.patientRepository = patientRepository;
         this.boxRepository = boxRepository;
         this.odontologistRepository = odontologistRepository;
         this.treatmentRepository = treatmentRepository;
+        this.stockBoxRepository = stockBoxRepository;
     }
 
 	@PostMapping("/new")
@@ -105,6 +109,10 @@ public class AppointmentController {
 	        ap.setTreatment(treatment);
 
 	        Appointment saved = appointmentRepository.save(ap);
+	        
+	        // Add utensils to stockBox for the appointment day
+	        addUtensilsToStockBox(saved);
+	        
 	        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
 
 	    } catch (Exception e) {
@@ -142,6 +150,13 @@ public class AppointmentController {
 	public ResponseEntity<String> deleteAppointment(@PathVariable long id) {
 
 		if (appointmentRepository.existsById(id)) {
+			Appointment appointment = appointmentRepository.findById(id).orElse(null);
+			
+			// Remove utensils from stockBox before deleting appointment
+			if (appointment != null) {
+				removeUtensilsFromStockBox(appointment);
+			}
+			
 			appointmentRepository.deleteById(id);
 			return ResponseEntity.ok("");
 		} else {
@@ -162,6 +177,15 @@ public class AppointmentController {
 
 	    Appointment db = appointmentRepository.findById(id).orElse(null);
 	    if (db == null) return ResponseEntity.notFound().build();
+
+	    // Store old values before updating to detect changes
+	    Long oldBoxId = db.getBox() != null ? db.getBox().getId() : null;
+	    Long oldTreatmentId = db.getTreatment() != null ? db.getTreatment().getId() : null;
+	    LocalDateTime oldDate = db.getDate();
+	    Appointment oldAppointmentCopy = new Appointment();
+	    oldAppointmentCopy.setBox(db.getBox());
+	    oldAppointmentCopy.setTreatment(db.getTreatment());
+	    oldAppointmentCopy.setDate(oldDate);
 
 	    if (body.getMotive() != null && !body.getMotive().trim().isEmpty()) {
 	        db.setMotive(body.getMotive().trim());
@@ -184,7 +208,24 @@ public class AppointmentController {
 	        db.setTreatment(entityManager.getReference(Treatment.class, body.getTreatmentId()));
 	    }
 
-	    return ResponseEntity.ok(appointmentRepository.save(db));
+	    Appointment updated = appointmentRepository.save(db);
+	    
+	    // Check if box, treatment, or date changed
+	    Long newBoxId = updated.getBox() != null ? updated.getBox().getId() : null;
+	    Long newTreatmentId = updated.getTreatment() != null ? updated.getTreatment().getId() : null;
+	    LocalDateTime newDate = updated.getDate();
+	    
+	    boolean boxChanged = !java.util.Objects.equals(oldBoxId, newBoxId);
+	    boolean treatmentChanged = !java.util.Objects.equals(oldTreatmentId, newTreatmentId);
+	    boolean dateChanged = !java.util.Objects.equals(oldDate, newDate);
+	    
+	    if (boxChanged || treatmentChanged || dateChanged) {
+	        // If any of these changed, update stockBox
+	        removeUtensilsFromStockBox(oldAppointmentCopy);
+	        addUtensilsToStockBox(updated);
+	    }
+
+	    return ResponseEntity.ok(updated);
 	}
 	
 	
@@ -337,6 +378,103 @@ public class AppointmentController {
 	    String lastname2 = odontologist.getLastname2() != null ? odontologist.getLastname2() : "";
 
 	    return (name + " " + lastname1 + " " + lastname2).trim().replaceAll("\\s+", " ");
+	}
+
+	/**
+	 * Helper method to add utensils from a treatment to the StockBox table
+	 * for the appointment day and box
+	 */
+	private void addUtensilsToStockBox(Appointment appointment) {
+		try {
+			if (appointment == null || appointment.getTreatment() == null || 
+				appointment.getBox() == null || appointment.getDate() == null) {
+				return;
+			}
+
+			Treatment treatment = appointment.getTreatment();
+			Set<TreatmentUtensil> treatmentUtensils = treatment.getTreatmentUtensils();
+			LocalDate appointmentDay = appointment.getDate().toLocalDate();
+			Long boxId = appointment.getBox().getId();
+
+			for (TreatmentUtensil tu : treatmentUtensils) {
+				if (tu.getUtensil() != null) {
+					StockBoxRequest stockBoxRequest = new StockBoxRequest();
+					stockBoxRequest.setUtensilId(tu.getUtensil().getId());
+					stockBoxRequest.setBoxId(boxId);
+					stockBoxRequest.setQuantity(tu.getQuantity());
+					stockBoxRequest.setStocked(false); // Not stocked by default
+					stockBoxRequest.setDay(appointmentDay);
+
+					// This will use the upsert logic in StockBoxController
+					// So if it exists, it will accumulate the quantity
+					Optional<StockBox> existing = stockBoxRepository.findByUtensilIdAndBoxIdAndDay(
+						tu.getUtensil().getId(),
+						boxId,
+						appointmentDay
+					);
+
+					if (existing.isPresent()) {
+						StockBox stockBox = existing.get();
+						stockBox.setQuantity(stockBox.getQuantity() + tu.getQuantity());
+						stockBoxRepository.save(stockBox);
+					} else {
+						StockBox stockBox = new StockBox();
+						stockBox.setUtensil(tu.getUtensil());
+						stockBox.setBox(appointment.getBox());
+						stockBox.setQuantity(tu.getQuantity());
+						stockBox.setStocked(false);
+						stockBox.setDay(appointmentDay);
+						stockBoxRepository.save(stockBox);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Helper method to remove utensils from the StockBox table
+	 * when an appointment is deleted or updated
+	 */
+	private void removeUtensilsFromStockBox(Appointment appointment) {
+		try {
+			if (appointment == null || appointment.getTreatment() == null || 
+				appointment.getBox() == null || appointment.getDate() == null) {
+				return;
+			}
+
+			Treatment treatment = appointment.getTreatment();
+			Set<TreatmentUtensil> treatmentUtensils = treatment.getTreatmentUtensils();
+			LocalDate appointmentDay = appointment.getDate().toLocalDate();
+			Long boxId = appointment.getBox().getId();
+
+			for (TreatmentUtensil tu : treatmentUtensils) {
+				if (tu.getUtensil() != null) {
+					Optional<StockBox> existing = stockBoxRepository.findByUtensilIdAndBoxIdAndDay(
+						tu.getUtensil().getId(),
+						boxId,
+						appointmentDay
+					);
+
+					if (existing.isPresent()) {
+						StockBox stockBox = existing.get();
+						int newQuantity = stockBox.getQuantity() - tu.getQuantity();
+						
+						if (newQuantity <= 0) {
+							// Delete the record if quantity becomes 0 or less
+							stockBoxRepository.deleteById(stockBox.getId());
+						} else {
+							// Subtract the quantity
+							stockBox.setQuantity(newQuantity);
+							stockBoxRepository.save(stockBox);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

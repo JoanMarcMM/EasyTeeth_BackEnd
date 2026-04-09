@@ -1,9 +1,7 @@
 package com.easyteeth.EasyTeeth.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,6 +37,10 @@ public class StockBox {
 
    
     private int quantity;
+    
+    private boolean stocked;
+    
+    private LocalDate day;
 
     public StockBox() {
     	
@@ -70,6 +72,22 @@ public class StockBox {
 
 	public int getQuantity() {
 		return quantity;
+	}
+
+	public boolean isStocked() {
+		return stocked;
+	}
+
+	public void setStocked(boolean stocked) {
+		this.stocked = stocked;
+	}
+
+	public LocalDate getDay() {
+		return day;
+	}
+
+	public void setDay(LocalDate day) {
+		this.day = day;
 	}
 
 	public void setQuantity(int quantity) {
