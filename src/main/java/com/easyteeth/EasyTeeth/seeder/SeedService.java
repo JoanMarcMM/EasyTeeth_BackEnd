@@ -158,10 +158,7 @@ public class SeedService {
 
     private static final List<Box> PRESET_BOX = List.of(
             new Box(101),
-            new Box(102),
-            new Box(103),
-            new Box(104),
-            new Box(105)
+            new Box(102)
     );
 
     @Transactional
