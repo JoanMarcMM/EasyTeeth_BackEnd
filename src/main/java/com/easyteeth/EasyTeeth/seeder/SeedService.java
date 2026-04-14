@@ -185,23 +185,23 @@ public class SeedService {
     }
 
     private static final List<Treatment> PRESET_TREATMENTS = List.of(
-            new Treatment("Diagnòstic i exploració", 20),
-            new Treatment("Revisió i control", 15),
-            new Treatment("Radiografia periapical", 10),
-            new Treatment("Anestèsia local", 5),
-            new Treatment("Neteja dental (profilaxi)", 40),
-            new Treatment("Poliment i fluorització", 15),
-            new Treatment("Sellat de fissures", 30),
-            new Treatment("Obturació simple (empastament)", 45),
+            new Treatment("Diagnòstic i exploració", 60),
+            new Treatment("Revisió i control", 60),
+            new Treatment("Radiografia periapical", 60),
+            new Treatment("Anestèsia local", 60),
+            new Treatment("Neteja dental (profilaxi)", 60),
+            new Treatment("Poliment i fluorització", 60),
+            new Treatment("Sellat de fissures", 60),
+            new Treatment("Obturació simple (empastament)", 60),
             new Treatment("Obturació complexa", 60),
             new Treatment("Reconstrucció dental", 60),
-            new Treatment("Endodòncia unirradicular", 90),
-            new Treatment("Endodòncia multirradicular", 120),
-            new Treatment("Desinfecció i irrigació endodòntica", 20),
-            new Treatment("Extracció simple", 45),
-            new Treatment("Extracció quirúrgica", 75),
+            new Treatment("Endodòncia unirradicular", 60),
+            new Treatment("Endodòncia multirradicular", 60),
+            new Treatment("Desinfecció i irrigació endodòntica", 60),
+            new Treatment("Extracció simple", 60),
+            new Treatment("Extracció quirúrgica", 60),
             new Treatment("Curetaje periodontal (1 quadrant)", 60),
-            new Treatment("Fèrula de descàrrega", 30),
+            new Treatment("Fèrula de descàrrega", 60),
             new Treatment("Blanquejament dental", 60)
     );
 
