@@ -23,6 +23,7 @@ public class SeedService {
     private final TreatmentUtensilRepository treatmentUtensilRepository;
     private final SpecialityRepository specialityRepository;
     private final AvailabilityRepository availabilityRepository;
+    private final StockStorageRepository stockStorageRepository;
 
     public SeedService(
             UserRepository userRepository,
@@ -36,7 +37,8 @@ public class SeedService {
             UtensilRepository utensilRepository,
             TreatmentUtensilRepository treatmentUtensilRepository,
             SpecialityRepository specialityRepository,
-            AvailabilityRepository availabilityRepository
+            AvailabilityRepository availabilityRepository,
+            StockStorageRepository stockStorageRepository
     ) {
         this.userRepository = userRepository;
         this.toothRepository = toothRepository;
@@ -50,6 +52,7 @@ public class SeedService {
         this.treatmentUtensilRepository = treatmentUtensilRepository;
         this.specialityRepository = specialityRepository;
         this.availabilityRepository = availabilityRepository;
+        this.stockStorageRepository = stockStorageRepository;
     }
 
     private static final List<User> PRESET_USERS = List.of(
@@ -171,8 +174,7 @@ public class SeedService {
     }
 
     private static final List<Storage> PRESET_STORAGE = List.of(
-            new Storage(201),
-            new Storage(202)
+            new Storage(1)
     );
 
     @Transactional
@@ -626,6 +628,24 @@ public class SeedService {
                         a.isMorning(),
                         a.isAfternoon()
                 ));
+            }
+        }
+    }
+
+    @Transactional
+    public void seedStockStorageIfMissing() {
+        List<Storage> storages = storageRepository.findAll();
+        List<Utensil> utensils = utensilRepository.findAll();
+
+        for (Storage storage : storages) {
+            for (Utensil utensil : utensils) {
+                if (!stockStorageRepository.existsByUtensilIdAndStorageId(utensil.getId(), storage.getId())) {
+                    StockStorage stockStorage = new StockStorage();
+                    stockStorage.setUtensil(utensil);
+                    stockStorage.setStorage(storage);
+                    stockStorage.setQuantity(0);
+                    stockStorageRepository.save(stockStorage);
+                }
             }
         }
     }
