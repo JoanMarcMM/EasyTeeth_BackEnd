@@ -83,7 +83,7 @@ public class UtensilOrderController {
             order.setArrived(false);
 
             for (OrderItemRequest itemReq : req.getOrderItems()) {
-                if (itemReq.getUtensilId() == null || itemReq.getQuantity() <= 0) {
+                if (itemReq.getUtensilId() == null || itemReq.getQuantity() == null || itemReq.getQuantity() <= 0) {
                     return ResponseEntity.badRequest().body("Cada item debe tener utensilId y cantidad > 0");
                 }
 
@@ -96,7 +96,7 @@ public class UtensilOrderController {
                 item.setOrder(order);
                 item.setUtensil(utensil.get());
                 item.setQuantity(itemReq.getQuantity());
-                item.setUnitPrice(utensil.get().getPrice());
+                item.setUnitPrice(itemReq.getUnitPrice() != null ? itemReq.getUnitPrice() : utensil.get().getPrice());
 
                 order.addOrderItem(item);
             }

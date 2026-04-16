@@ -1,5 +1,6 @@
 package com.easyteeth.EasyTeeth.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,6 +25,7 @@ public class OrderItem {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private UtensilOrder order;
 
     @ManyToOne(optional = false)
