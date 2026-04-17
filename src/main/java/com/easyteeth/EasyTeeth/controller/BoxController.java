@@ -29,20 +29,23 @@ import jakarta.persistence.PersistenceContext;
 @RequestMapping("/box")
 public class BoxController {
 
-	@PersistenceContext
-	private EntityManager entityManager;
-
-	@Autowired
-	private BoxRepository boxRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
+    private BoxRepository boxRepository;
+    
+    @Autowired
     private StockBoxRepository stockBoxRepository;
+
+    
 
 	
 	public BoxController(
 			BoxRepository boxRepository
     ) {
         this.boxRepository = boxRepository;
+        this.stockBoxRepository = stockBoxRepository;
     }
 
 	@GetMapping("/{id}")
@@ -128,3 +131,4 @@ public class BoxController {
 	
 }
 
+}
