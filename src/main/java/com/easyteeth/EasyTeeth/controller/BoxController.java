@@ -29,35 +29,72 @@ import jakarta.persistence.PersistenceContext;
 @RequestMapping("/box")
 public class BoxController {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@Autowired
-	private BoxRepository boxRepository;
+    @Autowired
+    private BoxRepository boxRepository;
+    
+    @Autowired
+    private StockBoxRepository stockBoxRepository;
 
-	
-	public BoxController(
-			BoxRepository boxRepository
+    
+    public BoxController(
+            BoxRepository boxRepository,
+            StockBoxRepository stockBoxRepository
     ) {
         this.boxRepository = boxRepository;
+        this.stockBoxRepository = stockBoxRepository;
     }
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Optional<Box>> getBox(@PathVariable("id") Long idBox)
-			throws IOException {
-		Optional<Box> box = boxRepository.findById(idBox);
-		if (box.isPresent()) {
-			return ResponseEntity.ok(box);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Box>> getBox(@PathVariable("id") Long idBox)
+            throws IOException {
+        Optional<Box> box = boxRepository.findById(idBox);
+        if (box.isPresent()) {
+            return ResponseEntity.ok(box);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-	@GetMapping("/index")
-	public ResponseEntity<List<Box>> getAll() throws IOException {
-		List<Box> boxes = boxRepository.findAll();
-		return ResponseEntity.ok(boxes);
-	}
+    @GetMapping("/index")
+    public ResponseEntity<List<Box>> getAll() throws IOException {
+        List<Box> boxes = boxRepository.findAll();
+        return ResponseEntity.ok(boxes);
+    }
+
+    @GetMapping("/{id}/materials")
+    public ResponseEntity<List<StockBox>> getMaterialsByDay(
+            @PathVariable("id") Long boxId,
+            @RequestParam String date) throws IOException {
+        try {
+            LocalDate localDate = LocalDate.parse(date);
+            List<StockBox> materials = stockBoxRepository.findByBoxIdAndDay(boxId, localDate);
+            return ResponseEntity.ok(materials);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/{id}/update-status")
+    public ResponseEntity<?> updateStockStatus(
+            @PathVariable("id") Long boxId,
+            @RequestParam String date,
+            @RequestParam Boolean status) throws IOException {
+        try {
+            LocalDate localDate = LocalDate.parse(date);
+            List<StockBox> stockBoxes = stockBoxRepository.findByBoxIdAndDay(boxId, localDate);
+            
+            for (StockBox stockBox : stockBoxes) {
+                stockBox.setStocked(status);
+                stockBoxRepository.save(stockBox);
+            }
+            
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }
-
