@@ -39,62 +39,96 @@ public class BoxController {
     private StockBoxRepository stockBoxRepository;
 
     
-    public BoxController(
-            BoxRepository boxRepository,
-            StockBoxRepository stockBoxRepository
+
+	
+	public BoxController(
+			BoxRepository boxRepository
     ) {
         this.boxRepository = boxRepository;
         this.stockBoxRepository = stockBoxRepository;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<Box>> getBox(@PathVariable("id") Long idBox)
-            throws IOException {
-        Optional<Box> box = boxRepository.findById(idBox);
-        if (box.isPresent()) {
-            return ResponseEntity.ok(box);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+	@GetMapping("/{id}")
+	public ResponseEntity<Optional<Box>> getBox(@PathVariable("id") Long idBox)
+			throws IOException {
+		Optional<Box> box = boxRepository.findById(idBox);
+		if (box.isPresent()) {
+			return ResponseEntity.ok(box);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 
-    @GetMapping("/index")
-    public ResponseEntity<List<Box>> getAll() throws IOException {
-        List<Box> boxes = boxRepository.findAll();
-        return ResponseEntity.ok(boxes);
-    }
-
-    @GetMapping("/{id}/materials")
-    public ResponseEntity<List<StockBox>> getMaterialsByDay(
-            @PathVariable("id") Long boxId,
-            @RequestParam String date) throws IOException {
+	@GetMapping("/index")
+	public ResponseEntity<List<Box>> getAll() throws IOException {
+		List<Box> boxes = boxRepository.findAll();
+		return ResponseEntity.ok(boxes);
+	}
+	
+	@PostMapping("/{id}/assign-materials")
+    public ResponseEntity<String> assignMaterials(
+            @PathVariable("id") Long id, 
+            @RequestParam("date") String date) {
         try {
-            LocalDate localDate = LocalDate.parse(date);
-            List<StockBox> materials = stockBoxRepository.findByBoxIdAndDay(boxId, localDate);
-            return ResponseEntity.ok(materials);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+            LocalDate fechaProgramada = LocalDate.parse(date);
+            List<StockBox> materialesDelBox = stockBoxRepository.findByBoxId(id);
 
-    @PostMapping("/{id}/update-status")
-    public ResponseEntity<?> updateStockStatus(
-            @PathVariable("id") Long boxId,
-            @RequestParam String date,
-            @RequestParam Boolean status) throws IOException {
-        try {
-            LocalDate localDate = LocalDate.parse(date);
-            List<StockBox> stockBoxes = stockBoxRepository.findByBoxIdAndDay(boxId, localDate);
-            
-            for (StockBox stockBox : stockBoxes) {
-                stockBox.setStocked(status);
-                stockBoxRepository.save(stockBox);
+            if (materialesDelBox.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No hay utensilios asignados a este box para programar.");
             }
+
+            for (StockBox item : materialesDelBox) {
+                item.setDay(fechaProgramada);
+                item.setStocked(false); 
+                stockBoxRepository.save(item);
+            }
+
+            return ResponseEntity.ok("Éxito: " + materialesDelBox.size() + " materiales programados.");
             
-            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al procesar la asignación: " + e.getMessage());
+            
         }
     }
+	@GetMapping("/{id}/materials")
+	public ResponseEntity<List<StockBox>> getMaterialsByDay(
+	        @PathVariable("id") Long id, 
+	        @RequestParam("date") String date) {
+	    try {
+	        LocalDate fechaSolicitada = LocalDate.parse(date);
+	        List<StockBox> materiales = stockBoxRepository.findByBoxIdAndDay(id, fechaSolicitada);
+	        return ResponseEntity.ok(materiales);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+	}
+	
+	@PostMapping("/{id}/update-status")
+	public ResponseEntity<String> updateStockStatus(
+	        @PathVariable("id") Long id, 
+	        @RequestParam("date") String date,
+	        @RequestParam("status") boolean status) { 
+	    try {
+	        LocalDate fecha = LocalDate.parse(date);
+	        List<StockBox> materiales = stockBoxRepository.findByBoxIdAndDay(id, fecha);
+	        
+	        if (materiales.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No hay materiales para este día");
+	        }
+
+	        for (StockBox material : materiales) {
+	            material.setStocked(status);
+	        }
+	        
+	        stockBoxRepository.saveAll(materiales);
+	        return ResponseEntity.ok("Estado actualizado correctamente");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar");
+	    }
+	}
+	
+}
 
 }
