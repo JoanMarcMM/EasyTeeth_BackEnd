@@ -18,7 +18,7 @@ import jakarta.persistence.UniqueConstraint;
 @Entity
 @Table(
     uniqueConstraints = @UniqueConstraint(
-        columnNames = {"utensil_id", "box_id"}
+        columnNames = {"utensil_id", "box_id","day"}
     )
 )
 public class StockBox {
@@ -93,7 +93,4 @@ public class StockBox {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-    
-    
-
 }
