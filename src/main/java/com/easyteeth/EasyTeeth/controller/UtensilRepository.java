@@ -11,5 +11,11 @@ public interface UtensilRepository extends JpaRepository<Utensil, Long> {
 
 	boolean existsByNameAndModel(String name, String model);
     Optional<Utensil> findByNameAndModel(String name, String model);
+    
+    List<Utensil> findByNameContainingIgnoreCase(String name);
+    
+    List<Utensil> findByBrand(String brand);
+    
+    List<Utensil> findBySupplierId(Long supplierId);
 
 }
