@@ -132,5 +132,29 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@PutMapping("/{id}/password")
+	public ResponseEntity<?> changePassword(
+	    @PathVariable Long id,
+	    @RequestBody ChangePasswordRequest request
+	) {
+	    try {
+	        // 1. Find user by ID
+	        User user = userRepository.findById(id).orElseThrow(() -> 
+	            new RuntimeException("Usuario no encontrado"));
+	        
+	        // 2. Verify old password matches
+	        if (!user.getPassword().equals(request.getOldPassword())) {
+	            return ResponseEntity.status(401).body("La contraseña actual no es correcta");
+	        }
+	        
+	        // 3. Update password
+	        user.setPassword(request.getNewPassword());
+	        userRepository.save(user);
+	        
+	        return ResponseEntity.ok("Contraseña cambiada correctamente");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(500).body("Error al cambiar contraseña: " + e.getMessage());
+	    }
+	}
 
 }
