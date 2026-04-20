@@ -320,11 +320,11 @@ public class SeedService {
     }
 
     private static final List<Supplier> PRESET_SUPPLIERS = List.of(
-            new Supplier("DentPro Catalunya", "contacte@dentprocatalunya.cat", 931234567),
-            new Supplier("Material Dental Pirineus", "info@materialdentalpirineus.cat", 972345678),
-            new Supplier("OrtoLab Barcelona", "suport@ortolabbarcelona.cat", 934567890),
-            new Supplier("EndoTech Girona", "hola@endotechgirona.cat", 972112233),
-            new Supplier("Clínic Supplies BCN", "servei@clinicsuppliesbcn.cat", 933221100)
+            new Supplier("Coltene Dental Materials", "vendes@coltenecatalunya.es", 931234567),
+            new Supplier("GC Corporation", "servei@gccorp-dental.es", 972345678),
+            new Supplier("Septodont Spain", "distribucio@septodont-spain.es", 934567890),
+            new Supplier("Hu-Friedy Instruments", "clients@hufriedyspain.es", 972112233),
+            new Supplier("Universal Dental Supplies", "compres@universaldentalspain.es", 933221100)
     );
 
     @Transactional
@@ -347,22 +347,61 @@ public class SeedService {
         record UtensilPreset(String name, String brand, String model, double price, String supplierName) {}
 
         List<UtensilPreset> preset = List.of(
-                new UtensilPreset("Turbina d'alta velocitat", "KaVo", "EXPERTtorque E680", 1290.00, "DentPro Catalunya"),
-                new UtensilPreset("Contraangle", "NSK", "Ti-Max X95L", 690.00, "DentPro Catalunya"),
-                new UtensilPreset("Micromotor", "Bien-Air", "MX2", 890.00, "Clínic Supplies BCN"),
-                new UtensilPreset("Làmpada de fotopolimerització", "Ivoclar", "Bluephase PowerCure", 980.00, "Material Dental Pirineus"),
-                new UtensilPreset("Apex locator", "VDW", "Raypex 6", 750.00, "OrtoLab Barcelona"),
-                new UtensilPreset("Motor d'endodòncia", "VDW", "Reciproc Gold", 1350.00, "EndoTech Girona"),
-                new UtensilPreset("Localitzador de càries", "KaVo", "DIAGNOdent", 1150.00, "DentPro Catalunya"),
-                new UtensilPreset("Càmera intraoral", "Dürr Dental", "VistaCam iX", 1850.00, "Material Dental Pirineus"),
-                new UtensilPreset("Ultrasons d'higiene", "EMS", "Piezon 150", 2100.00, "Clínic Supplies BCN"),
-                new UtensilPreset("Joc de miralls intraorals", "Hu-Friedy", "MIR-SET01", 79.90, "Clínic Supplies BCN"),
-                new UtensilPreset("Sonda periodontal", "Hu-Friedy", "PCP-UNC15", 34.50, "Clínic Supplies BCN"),
-                new UtensilPreset("Dique de goma (kit)", "Coltene", "Dam Kit", 59.00, "EndoTech Girona"),
-                new UtensilPreset("Xeringa d'irrigació endodòntica", "Ultradent", "Endo-Eze", 12.50, "EndoTech Girona"),
-                new UtensilPreset("Kit de blanquejament (làmpada)", "Philips", "Zoom WhiteSpeed", 2990.00, "Material Dental Pirineus"),
-                new UtensilPreset("Gafes de protecció", "UVEX", "i-vo", 9.90, "Clínic Supplies BCN"),
-                new UtensilPreset("Joc de puntes d'ultrasons", "EMS", "PS Tips", 149.00, "Clínic Supplies BCN")
+                // Basic Instruments - Mirrors and Explorers
+                new UtensilPreset("Mirall intraoral", "Hu-Friedy", "MIR-001", 2.50, "Hu-Friedy Instruments"),
+                new UtensilPreset("Explorador dental", "Hu-Friedy", "EXP-001", 1.75, "Hu-Friedy Instruments"),
+                new UtensilPreset("Serreta manual", "Coltene", "SCA-001", 3.25, "Coltene Dental Materials"),
+                new UtensilPreset("Raspall endodòntic", "Universal", "ENP-001", 0.50, "Universal Dental Supplies"),
+                
+                // Disposable Items
+                new UtensilPreset("Guants de nitrili (caixa 100)", "Universal", "GLV-100", 4.99, "Universal Dental Supplies"),
+                new UtensilPreset("Mascareta quirúrgica (caixa 50)", "Universal", "MAS-050", 2.99, "Universal Dental Supplies"),
+                new UtensilPreset("Bavella dental (paquet 50)", "Coltene", "BIB-050", 3.75, "Coltene Dental Materials"),
+                new UtensilPreset("Gasa estèril (paquet 100)", "Septodont", "GAZ-100", 2.50, "Septodont Spain"),
+                new UtensilPreset("Rotlle de cotó (caixa)", "Universal", "COT-BOX", 1.25, "Universal Dental Supplies"),
+                
+                // Syringes and Needles
+                new UtensilPreset("Xeringa carpul reutilitzable", "Universal", "SYR-001", 8.50, "Universal Dental Supplies"),
+                new UtensilPreset("Agulla 27G estèril (paquet 50)", "Septodont", "NED-27G", 3.99, "Septodont Spain"),
+                new UtensilPreset("Agulla 30G estèril (paquet 50)", "Septodont", "NED-30G", 4.50, "Septodont Spain"),
+                new UtensilPreset("Cartuix d'anestèsia 1.8ml (10 unitats)", "Septodont", "ANA-CAR", 6.75, "Septodont Spain"),
+                
+                // Polishing and Cleaning
+                new UtensilPreset("Copa de poliment de goma", "Universal", "POL-COP", 0.75, "Universal Dental Supplies"),
+                new UtensilPreset("Cepill de poliment", "Universal", "POL-BRU", 0.50, "Universal Dental Supplies"),
+                new UtensilPreset("Pasta de poliment (tub 100g)", "GC", "POL-PAS", 2.25, "GC Corporation"),
+                new UtensilPreset("Puntes de succió (paquet 50)", "Universal", "SUC-TIP", 2.99, "Universal Dental Supplies"),
+                
+                // Filling and Restoration Materials
+                new UtensilPreset("Composite A2 (jeringa 4g)", "GC", "COM-A2", 3.50, "GC Corporation"),
+                new UtensilPreset("Composite A3 (jeringa 4g)", "GC", "COM-A3", 3.50, "GC Corporation"),
+                new UtensilPreset("Ciment de vidre ionomèric", "Coltene", "CEM-GI", 4.75, "Coltene Dental Materials"),
+                new UtensilPreset("Fosset estèril (caixa 100)", "Universal", "FOE-100", 3.25, "Universal Dental Supplies"),
+                
+                // Etch and Bonding Agents
+                new UtensilPreset("Grab estètic 37% (jeringa 1.2ml)", "Septodont", "ETC-37", 2.99, "Septodont Spain"),
+                new UtensilPreset("Adhesiu dentinari (jeringa 1.5ml)", "GC", "BND-ADH", 5.50, "GC Corporation"),
+                
+                // Burs and Files
+                new UtensilPreset("Fresa de diamant (1mm)", "Universal", "BUR-DIA1", 1.25, "Universal Dental Supplies"),
+                new UtensilPreset("Fresa de diamant (1.5mm)", "Universal", "BUR-DIA15", 1.25, "Universal Dental Supplies"),
+                new UtensilPreset("Fresa de carbur (1mm)", "Universal", "BUR-CAR1", 0.85, "Universal Dental Supplies"),
+                new UtensilPreset("Limetres endodòntiques (joc 6)", "Universal", "FILE-ENP", 6.99, "Universal Dental Supplies"),
+                
+                // Endodontic Materials
+                new UtensilPreset("Goma de dique (caixa 36)", "Coltene", "DAM-036", 2.75, "Coltene Dental Materials"),
+                new UtensilPreset("Clamps de goma (paquet 5)", "Universal", "CLM-RUB", 3.50, "Universal Dental Supplies"),
+                new UtensilPreset("Gutaperxa en barres (caixa 30)", "Septodont", "GTA-BAR", 3.99, "Septodont Spain"),
+                new UtensilPreset("Cemento per endodòncia", "Coltene", "CEM-END", 5.25, "Coltene Dental Materials"),
+                
+                // Periodontal
+                new UtensilPreset("Sonda periodontal", "Hu-Friedy", "PRD-001", 2.50, "Hu-Friedy Instruments"),
+                new UtensilPreset("Cureta Gracey (assortiment 6 peces)", "Universal", "CUR-GRY", 12.99, "Universal Dental Supplies"),
+                
+                // General Supplies
+                new UtensilPreset("Gafes de protecció", "Universal", "GLV-EYE", 1.50, "Universal Dental Supplies"),
+                new UtensilPreset("Gorro de protecció", "Universal", "CAP-PRO", 0.75, "Universal Dental Supplies"),
+                new UtensilPreset("Protector de camilla reutilitzable", "Universal", "PRT-CHR", 4.50, "Universal Dental Supplies")
         );
 
         for (UtensilPreset up : preset) {
@@ -406,92 +445,130 @@ public class SeedService {
 
         Linker linker = new Linker();
 
-        linker.link("Diagnòstic i exploració", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Diagnòstic i exploració", "Càmera intraoral", "VistaCam iX", 1);
-        linker.link("Diagnòstic i exploració", "Localitzador de càries", "DIAGNOdent", 1);
-        linker.link("Diagnòstic i exploració", "Gafes de protecció", "i-vo", 1);
+        // Diagnòstic i exploració
+        linker.link("Diagnòstic i exploració", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Diagnòstic i exploració", "Explorador dental", "EXP-001", 1);
+        linker.link("Diagnòstic i exploració", "Guants de nitrili (caixa 100)", "GLV-100", 1);
+        linker.link("Diagnòstic i exploració", "Mascareta quirúrgica (caixa 50)", "MAS-050", 1);
+        linker.link("Diagnòstic i exploració", "Gafes de protecció", "GLV-EYE", 1);
 
-        linker.link("Revisió i control", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Revisió i control", "Càmera intraoral", "VistaCam iX", 1);
-        linker.link("Revisió i control", "Gafes de protecció", "i-vo", 1);
+        // Revisió i control
+        linker.link("Revisió i control", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Revisió i control", "Explorador dental", "EXP-001", 1);
+        linker.link("Revisió i control", "Guants de nitrili (caixa 100)", "GLV-100", 1);
+        linker.link("Revisió i control", "Mascareta quirúrgica (caixa 50)", "MAS-050", 1);
 
-        linker.link("Radiografia periapical", "Càmera intraoral", "VistaCam iX", 1);
-        linker.link("Radiografia periapical", "Gafes de protecció", "i-vo", 1);
+        // Radiografia periapical
+        linker.link("Radiografia periapical", "Guants de nitrili (caixa 100)", "GLV-100", 1);
+        linker.link("Radiografia periapical", "Mascareta quirúrgica (caixa 50)", "MAS-050", 1);
 
-        linker.link("Anestèsia local", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Anestèsia local", "Gafes de protecció", "i-vo", 1);
+        // Anestèsia local
+        linker.link("Anestèsia local", "Xeringa carpul reutilitzable", "SYR-001", 1);
+        linker.link("Anestèsia local", "Agulla 27G estèril (paquet 50)", "NED-27G", 1);
+        linker.link("Anestèsia local", "Cartuix d'anestèsia 1.8ml (10 unitats)", "ANA-CAR", 1);
+        linker.link("Anestèsia local", "Guants de nitrili (caixa 100)", "GLV-100", 1);
 
-        linker.link("Neteja dental (profilaxi)", "Ultrasons d'higiene", "Piezon 150", 1);
-        linker.link("Neteja dental (profilaxi)", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Neteja dental (profilaxi)", "Joc de puntes d'ultrasons", "PS Tips", 1);
-        linker.link("Neteja dental (profilaxi)", "Gafes de protecció", "i-vo", 1);
+        // Neteja dental (profilaxi)
+        linker.link("Neteja dental (profilaxi)", "Serreta manual", "SCA-001", 2);
+        linker.link("Neteja dental (profilaxi)", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Neteja dental (profilaxi)", "Rotlle de cotó (caixa)", "COT-BOX", 1);
+        linker.link("Neteja dental (profilaxi)", "Puntes de succió (paquet 50)", "SUC-TIP", 2);
+        linker.link("Neteja dental (profilaxi)", "Guants de nitrili (caixa 100)", "GLV-100", 1);
 
-        linker.link("Poliment i fluorització", "Ultrasons d'higiene", "Piezon 150", 1);
-        linker.link("Poliment i fluorització", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Poliment i fluorització", "Gafes de protecció", "i-vo", 1);
+        // Poliment i fluorització
+        linker.link("Poliment i fluorització", "Copa de poliment de goma", "POL-COP", 1);
+        linker.link("Poliment i fluorització", "Pasta de poliment (tub 100g)", "POL-PAS", 1);
+        linker.link("Poliment i fluorització", "Rotlle de cotó (caixa)", "COT-BOX", 1);
+        linker.link("Poliment i fluorització", "Puntes de succió (paquet 50)", "SUC-TIP", 1);
+        linker.link("Poliment i fluorització", "Guants de nitrili (caixa 100)", "GLV-100", 1);
 
-        linker.link("Sellat de fissures", "Contraangle", "Ti-Max X95L", 1);
-        linker.link("Sellat de fissures", "Làmpada de fotopolimerització", "Bluephase PowerCure", 1);
-        linker.link("Sellat de fissures", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Sellat de fissures", "Gafes de protecció", "i-vo", 1);
+        // Sellat de fissures
+        linker.link("Sellat de fissures", "Fresa de diamant (1mm)", "BUR-DIA1", 1);
+        linker.link("Sellat de fissures", "Grab estètic 37% (jeringa 1.2ml)", "ETC-37", 1);
+        linker.link("Sellat de fissures", "Adhesiu dentinari (jeringa 1.5ml)", "BND-ADH", 1);
+        linker.link("Sellat de fissures", "Composite A2 (jeringa 4g)", "COM-A2", 1);
+        linker.link("Sellat de fissures", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Sellat de fissures", "Fosset estèril (caixa 100)", "FOE-100", 1);
 
-        linker.link("Obturació simple (empastament)", "Turbina d'alta velocitat", "EXPERTtorque E680", 1);
-        linker.link("Obturació simple (empastament)", "Làmpada de fotopolimerització", "Bluephase PowerCure", 1);
-        linker.link("Obturació simple (empastament)", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Obturació simple (empastament)", "Gafes de protecció", "i-vo", 1);
+        // Obturació simple (empastament)
+        linker.link("Obturació simple (empastament)", "Fresa de diamant (1mm)", "BUR-DIA1", 1);
+        linker.link("Obturació simple (empastament)", "Grab estètic 37% (jeringa 1.2ml)", "ETC-37", 1);
+        linker.link("Obturació simple (empastament)", "Adhesiu dentinari (jeringa 1.5ml)", "BND-ADH", 1);
+        linker.link("Obturació simple (empastament)", "Composite A2 (jeringa 4g)", "COM-A2", 1);
+        linker.link("Obturació simple (empastament)", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Obturació simple (empastament)", "Fosset estèril (caixa 100)", "FOE-100", 1);
 
-        linker.link("Obturació complexa", "Turbina d'alta velocitat", "EXPERTtorque E680", 1);
-        linker.link("Obturació complexa", "Contraangle", "Ti-Max X95L", 1);
-        linker.link("Obturació complexa", "Làmpada de fotopolimerització", "Bluephase PowerCure", 1);
-        linker.link("Obturació complexa", "Micromotor", "MX2", 1);
-        linker.link("Obturació complexa", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Obturació complexa", "Gafes de protecció", "i-vo", 1);
+        // Obturació complexa
+        linker.link("Obturació complexa", "Fresa de diamant (1.5mm)", "BUR-DIA15", 1);
+        linker.link("Obturació complexa", "Composite A2 (jeringa 4g)", "COM-A2", 2);
+        linker.link("Obturació complexa", "Composite A3 (jeringa 4g)", "COM-A3", 1);
+        linker.link("Obturació complexa", "Grab estètic 37% (jeringa 1.2ml)", "ETC-37", 1);
+        linker.link("Obturació complexa", "Adhesiu dentinari (jeringa 1.5ml)", "BND-ADH", 1);
+        linker.link("Obturació complexa", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Obturació complexa", "Fosset estèril (caixa 100)", "FOE-100", 2);
 
-        linker.link("Reconstrucció dental", "Contraangle", "Ti-Max X95L", 1);
-        linker.link("Reconstrucció dental", "Làmpada de fotopolimerització", "Bluephase PowerCure", 1);
-        linker.link("Reconstrucció dental", "Micromotor", "MX2", 1);
-        linker.link("Reconstrucció dental", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Reconstrucció dental", "Gafes de protecció", "i-vo", 1);
+        // Reconstrucció dental
+        linker.link("Reconstrucció dental", "Composite A2 (jeringa 4g)", "COM-A2", 2);
+        linker.link("Reconstrucció dental", "Composite A3 (jeringa 4g)", "COM-A3", 2);
+        linker.link("Reconstrucció dental", "Adhesiu dentinari (jeringa 1.5ml)", "BND-ADH", 1);
+        linker.link("Reconstrucció dental", "Grab estètic 37% (jeringa 1.2ml)", "ETC-37", 1);
+        linker.link("Reconstrucció dental", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Reconstrucció dental", "Fosset estèril (caixa 100)", "FOE-100", 2);
 
-        linker.link("Endodòncia unirradicular", "Apex locator", "Raypex 6", 1);
-        linker.link("Endodòncia unirradicular", "Motor d'endodòncia", "Reciproc Gold", 1);
-        linker.link("Endodòncia unirradicular", "Dique de goma (kit)", "Dam Kit", 1);
-        linker.link("Endodòncia unirradicular", "Xeringa d'irrigació endodòntica", "Endo-Eze", 3);
-        linker.link("Endodòncia unirradicular", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Endodòncia unirradicular", "Gafes de protecció", "i-vo", 1);
+        // Endodòncia unirradicular
+        linker.link("Endodòncia unirradicular", "Limetres endodòntiques (joc 6)", "FILE-ENP", 1);
+        linker.link("Endodòncia unirradicular", "Goma de dique (caixa 36)", "DAM-036", 1);
+        linker.link("Endodòncia unirradicular", "Clamps de goma (paquet 5)", "CLM-RUB", 1);
+        linker.link("Endodòncia unirradicular", "Gutaperxa en barres (caixa 30)", "GTA-BAR", 1);
+        linker.link("Endodòncia unirradicular", "Cemento per endodòncia", "CEM-END", 1);
+        linker.link("Endodòncia unirradicular", "Raspall endodòntic", "ENP-001", 3);
+        linker.link("Endodòncia unirradicular", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Endodòncia unirradicular", "Fosset estèril (caixa 100)", "FOE-100", 1);
 
-        linker.link("Endodòncia multirradicular", "Apex locator", "Raypex 6", 1);
-        linker.link("Endodòncia multirradicular", "Motor d'endodòncia", "Reciproc Gold", 1);
-        linker.link("Endodòncia multirradicular", "Dique de goma (kit)", "Dam Kit", 1);
-        linker.link("Endodòncia multirradicular", "Xeringa d'irrigació endodòntica", "Endo-Eze", 5);
-        linker.link("Endodòncia multirradicular", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Endodòncia multirradicular", "Gafes de protecció", "i-vo", 1);
+        // Endodòncia multirradicular
+        linker.link("Endodòncia multirradicular", "Limetres endodòntiques (joc 6)", "FILE-ENP", 1);
+        linker.link("Endodòncia multirradicular", "Goma de dique (caixa 36)", "DAM-036", 2);
+        linker.link("Endodòncia multirradicular", "Clamps de goma (paquet 5)", "CLM-RUB", 1);
+        linker.link("Endodòncia multirradicular", "Gutaperxa en barres (caixa 30)", "GTA-BAR", 2);
+        linker.link("Endodòncia multirradicular", "Cemento per endodòncia", "CEM-END", 1);
+        linker.link("Endodòncia multirradicular", "Raspall endodòntic", "ENP-001", 5);
+        linker.link("Endodòncia multirradicular", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Endodòncia multirradicular", "Fosset estèril (caixa 100)", "FOE-100", 2);
 
-        linker.link("Desinfecció i irrigació endodòntica", "Xeringa d'irrigació endodòntica", "Endo-Eze", 4);
-        linker.link("Desinfecció i irrigació endodòntica", "Dique de goma (kit)", "Dam Kit", 1);
-        linker.link("Desinfecció i irrigació endodòntica", "Gafes de protecció", "i-vo", 1);
+        // Desinfecció i irrigació endodòntica
+        linker.link("Desinfecció i irrigació endodòntica", "Raspall endodòntic", "ENP-001", 2);
+        linker.link("Desinfecció i irrigació endodòntica", "Goma de dique (caixa 36)", "DAM-036", 1);
+        linker.link("Desinfecció i irrigació endodòntica", "Fosset estèril (caixa 100)", "FOE-100", 1);
 
-        linker.link("Extracció simple", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Extracció simple", "Micromotor", "MX2", 1);
-        linker.link("Extracció simple", "Gafes de protecció", "i-vo", 1);
+        // Extracció simple
+        linker.link("Extracció simple", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Extracció simple", "Explorador dental", "EXP-001", 1);
+        linker.link("Extracció simple", "Gasa estèril (paquet 100)", "GAZ-100", 3);
+        linker.link("Extracció simple", "Rotlle de cotó (caixa)", "COT-BOX", 1);
 
-        linker.link("Extracció quirúrgica", "Micromotor", "MX2", 1);
-        linker.link("Extracció quirúrgica", "Contraangle", "Ti-Max X95L", 1);
-        linker.link("Extracció quirúrgica", "Gafes de protecció", "i-vo", 1);
+        // Extracció quirúrgica
+        linker.link("Extracció quirúrgica", "Fresa de carbur (1mm)", "BUR-CAR1", 1);
+        linker.link("Extracció quirúrgica", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Extracció quirúrgica", "Gasa estèril (paquet 100)", "GAZ-100", 4);
+        linker.link("Extracció quirúrgica", "Rotlle de cotó (caixa)", "COT-BOX", 2);
 
-        linker.link("Curetaje periodontal (1 quadrant)", "Sonda periodontal", "PCP-UNC15", 1);
-        linker.link("Curetaje periodontal (1 quadrant)", "Ultrasons d'higiene", "Piezon 150", 1);
-        linker.link("Curetaje periodontal (1 quadrant)", "Joc de puntes d'ultrasons", "PS Tips", 1);
-        linker.link("Curetaje periodontal (1 quadrant)", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Curetaje periodontal (1 quadrant)", "Gafes de protecció", "i-vo", 1);
+        // Curetaje periodontal
+        linker.link("Curetaje periodontal (1 quadrant)", "Sonda periodontal", "PRD-001", 1);
+        linker.link("Curetaje periodontal (1 quadrant)", "Cureta Gracey (assortiment 6 peces)", "CUR-GRY", 1);
+        linker.link("Curetaje periodontal (1 quadrant)", "Mirall intraoral", "MIR-001", 1);
+        linker.link("Curetaje periodontal (1 quadrant)", "Puntes de succió (paquet 50)", "SUC-TIP", 1);
+        linker.link("Curetaje periodontal (1 quadrant)", "Gasa estèril (paquet 100)", "GAZ-100", 1);
 
-        linker.link("Fèrula de descàrrega", "Joc de miralls intraorals", "MIR-SET01", 1);
-        linker.link("Fèrula de descàrrega", "Càmera intraoral", "VistaCam iX", 1);
-        linker.link("Fèrula de descàrrega", "Gafes de protecció", "i-vo", 1);
+        // Fèrula de descàrrega
+        linker.link("Fèrula de descàrrega", "Composite A2 (jeringa 4g)", "COM-A2", 1);
+        linker.link("Fèrula de descàrrega", "Adhesiu dentinari (jeringa 1.5ml)", "BND-ADH", 1);
+        linker.link("Fèrula de descàrrega", "Mirall intraoral", "MIR-001", 1);
 
-        linker.link("Blanquejament dental", "Kit de blanquejament (làmpada)", "Zoom WhiteSpeed", 1);
-        linker.link("Blanquejament dental", "Gafes de protecció", "i-vo", 2);
-        linker.link("Blanquejament dental", "Càmera intraoral", "VistaCam iX", 1);
+        // Blanquejament dental
+        linker.link("Blanquejament dental", "Bavella dental (paquet 50)", "BIB-050", 1);
+        linker.link("Blanquejament dental", "Gafes de protecció", "GLV-EYE", 1);
+        linker.link("Blanquejament dental", "Guants de nitrili (caixa 100)", "GLV-100", 1);
+        linker.link("Blanquejament dental", "Mascareta quirúrgica (caixa 50)", "MAS-050", 1);
     }
 
     private static final List<Speciality> PRESET_SPECIALITIES = List.of(
