@@ -45,7 +45,7 @@ public class PathologyController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Optional<Pathology>> getPathology(@PathVariable("id") Long idPathology)
 			throws IOException {
-		Optional<Pathology> pathology = pathologyRepository.findById(idPathology);
+		Optional<Pathology> pathology = pathologyRepository.findByIdWithTreatments(idPathology);
 		if (pathology.isPresent()) {
 			return ResponseEntity.ok(pathology);
 		} else {

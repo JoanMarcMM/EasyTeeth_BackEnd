@@ -26,7 +26,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(
     uniqueConstraints = @UniqueConstraint(
-        columnNames = {"patient_id", "box_id", "odontologist_id","treatment_id"}
+        columnNames = {"odontologist_id", "box_id", "date"}
     )
 )
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

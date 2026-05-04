@@ -39,5 +39,50 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("end") LocalDateTime end,
             @Param("boxId") Long boxId
     );
+
+    @Query("""
+        SELECT a
+        FROM Appointment a
+        WHERE a.odontologist.id = :odontologistId
+          AND a.date >= :start
+          AND a.date < :end
+        ORDER BY a.date ASC
+    """)
+    List<Appointment> findByOdontologistIdAndDateBetween(
+            @Param("odontologistId") Long odontologistId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    @Query("""
+        SELECT a
+        FROM Appointment a
+        WHERE a.odontologist.id = :odontologistId
+          AND a.box.id = :boxId
+          AND a.date >= :start
+          AND a.date < :end
+        ORDER BY a.date ASC
+    """)
+    List<Appointment> findByOdontologistIdAndBoxIdAndDateBetween(
+            @Param("odontologistId") Long odontologistId,
+            @Param("boxId") Long boxId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    @Query("""
+        SELECT a
+        FROM Appointment a
+        WHERE a.box.id = :boxId
+          AND a.date >= :start
+          AND a.date < :end
+        ORDER BY a.date ASC
+    """)
+    List<Appointment> findByBoxIdAndDateBetween(
+            @Param("boxId") Long boxId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
     void deleteByPatientId(Long patientId);
 }
