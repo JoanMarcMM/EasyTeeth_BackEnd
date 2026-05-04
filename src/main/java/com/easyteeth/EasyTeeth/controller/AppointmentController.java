@@ -134,49 +134,218 @@ public class AppointmentController {
 
 		return true;
 	}
-
-	@GetMapping("/{id}")
-	public ResponseEntity<Optional<Appointment>> getAppointment(@PathVariable("id") Long idAppointment)
-			throws IOException {
-		Optional<Appointment> appointment = appointmentRepository.findById(idAppointment);
-		if (appointment.isPresent()) {
-			return ResponseEntity.ok(appointment);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+	/**
+	 * Generate available appointment slots for a given time period.
+	 * Each appointment is 55 minutes long with a 5-minute break.
+	 * Slots are generated on the hour (08:00, 09:00, etc.)
+	 */
+	private List<AvailableSlotDto.AppointmentSlot> generateAvailableSlots(
+	        List<Appointment> dayAppointments,
+	        java.time.LocalTime periodStart,
+	        java.time.LocalTime periodEnd
+	) {
+	    List<AvailableSlotDto.AppointmentSlot> slots = new ArrayList<>();
+	    
+	    System.out.println("Generating slots from " + periodStart + " to " + periodEnd);
+	    System.out.println("Existing appointments: " + dayAppointments.size());
+	    
+	    // Generate slots starting on the hour
+	    java.time.LocalTime slotTime = periodStart;
+	    
+	    while (slotTime.isBefore(periodEnd)) {
+	        java.time.LocalTime slotEnd = slotTime.plusMinutes(55);
+	        
+	        System.out.println("Checking slot: " + slotTime + " to " + slotEnd);
+	        
+	        // Check if slot end exceeds period end, if so skip this slot
+	        if (slotEnd.isAfter(periodEnd)) {
+	            System.out.println("Slot end exceeds period, breaking");
+	            break;
+	        }
+	        
+	        // Check if this slot overlaps with any existing appointment
+	        boolean isAvailable = true;
+	        for (Appointment apt : dayAppointments) {
+	            java.time.LocalTime aptStart = apt.getDate().toLocalTime();
+	            // Assume appointments are also 55 minutes
+	            java.time.LocalTime aptEnd = aptStart.plusMinutes(55);
+	            
+	            // Check for overlap: slot overlaps if:
+	            // slot starts before apt ends AND slot ends after apt starts
+	            if (slotTime.isBefore(aptEnd) && slotEnd.isAfter(aptStart)) {
+	                isAvailable = false;
+	                System.out.println("Slot overlaps with appointment at " + aptStart);
+	                break;
+	            }
+	        }
+	        
+	        slots.add(new AvailableSlotDto.AppointmentSlot(slotTime, slotEnd, isAvailable));
+	        System.out.println("Added slot: " + slotTime + " - available: " + isAvailable);
+	        
+	        // Move to next hour
+	        slotTime = slotTime.plusHours(1);
+	    }
+	    
+	    System.out.println("Total slots generated: " + slots.size());
+	    return slots;
 	}
+	
+	@GetMapping("/available-slots/{odontologistId}")
+	public ResponseEntity<?> getAvailableSlots(
+	        @PathVariable("odontologistId") Long odontologistId,
+	        @RequestParam(value = "startDate", required = false) LocalDate startDate,
+	        @RequestParam(value = "boxId", required = false) Long boxId
+	) {
+	    try {
+	        // Use provided date or today
+	        if (startDate == null) {
+	            startDate = LocalDate.now();
+	        }
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteAppointment(@PathVariable long id) {
+	        // Get odontologist and their availabilities
+	        Optional<Odontologist> odontologistOpt = odontologistRepository.findById(odontologistId);
+	        if (odontologistOpt.isEmpty()) {
+	            return ResponseEntity.badRequest().body("Odontologista no encontrada");
+	        }
 
-		if (appointmentRepository.existsById(id)) {
-			Appointment appointment = appointmentRepository.findById(id).orElse(null);
-			
-			// Remove utensils from stockBox before deleting appointment
-			if (appointment != null) {
-				removeUtensilsFromStockBox(appointment);
-			}
-			
-			appointmentRepository.deleteById(id);
-			return ResponseEntity.ok("");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
-		}
+	        Odontologist odontologist = odontologistOpt.get();
+	        Set<Availability> availabilities = odontologist.getAvailabilities();
+
+	        if (availabilities == null || availabilities.isEmpty()) {
+	            return ResponseEntity.badRequest().body("Odontologista sin disponibilidades");
+	        }
+
+	        // Find the next available day (within next 30 days)
+	        LocalDate currentDate = startDate;
+	        LocalDate endSearchDate = startDate.plusDays(30);
+	        
+	        List<AvailableSlotDto> result = new ArrayList<>();
+
+	        while (currentDate.isBefore(endSearchDate)) {
+	            String dayName = currentDate.getDayOfWeek().toString().toUpperCase();
+	            
+	            // Check if odontologist works this day - collect ALL availability records for this day
+	            List<Availability> dayAvailabilities = availabilities.stream()
+	                    .filter(a -> a.getDayOfWeek().equalsIgnoreCase(dayName))
+	                    .collect(java.util.stream.Collectors.toList());
+
+	            if (!dayAvailabilities.isEmpty()) {
+	                // Check if morning and/or afternoon are available in ANY of the records
+	                boolean hasMorning = dayAvailabilities.stream().anyMatch(a -> a.isMorning());
+	                boolean hasAfternoon = dayAvailabilities.stream().anyMatch(a -> a.isAfternoon());
+	                
+	                if (hasMorning || hasAfternoon) {
+	                    // Found a working day, get appointments for this day
+	                    LocalDateTime dayStart = currentDate.atStartOfDay();
+	                    LocalDateTime dayEnd = currentDate.plusDays(1).atStartOfDay();
+	                    
+	                    // Get all appointments for this odontologist across all boxes
+	                    // This prevents double-booking the same odontologist in different boxes at the same time
+	                    List<Appointment> odontologistAppointments = appointmentRepository.findByOdontologistIdAndDateBetween(
+	                            odontologistId,
+	                            dayStart,
+	                            dayEnd
+	                    );
+	                    
+	                    // If boxId is provided, also get all appointments in that specific box
+	                    // This prevents multiple odontologists in the same box at the same time
+	                    List<Appointment> boxAppointments = new ArrayList<>();
+	                    if (boxId != null && boxId > 0) {
+	                        boxAppointments = appointmentRepository.findByBoxIdAndDateBetween(
+	                                boxId,
+	                                dayStart,
+	                                dayEnd
+	                        );
+	                    }
+	                    
+	                    // Combine both lists to check conflicts: odontologist busy anywhere + box busy with anyone
+	                    List<Appointment> allConflictingAppointments = new ArrayList<>();
+	                    allConflictingAppointments.addAll(odontologistAppointments);
+	                    allConflictingAppointments.addAll(boxAppointments);
+
+	                    List<AvailableSlotDto.TimeSlot> timeSlots = new ArrayList<>();
+
+	                    // Morning slot (08:00 - 12:00)
+	                    if (hasMorning) {
+	                        List<AvailableSlotDto.AppointmentSlot> morningSlots = generateAvailableSlots(
+	                                allConflictingAppointments,
+	                                java.time.LocalTime.of(8, 0),
+	                                java.time.LocalTime.of(12, 0)
+	                        );
+	                        AvailableSlotDto.TimeSlot morningTimeSlot = new AvailableSlotDto.TimeSlot(
+	                                "MORNING",
+	                                java.time.LocalTime.of(8, 0),
+	                                java.time.LocalTime.of(12, 0),
+	                                morningSlots
+	                        );
+	                        timeSlots.add(morningTimeSlot);
+	                    }
+
+	                    // Afternoon slot (13:00 - 17:00)
+	                    if (hasAfternoon) {
+	                        List<AvailableSlotDto.AppointmentSlot> afternoonSlots = generateAvailableSlots(
+	                                allConflictingAppointments,
+	                                java.time.LocalTime.of(13, 0),
+	                                java.time.LocalTime.of(17, 0)
+	                        );
+	                        AvailableSlotDto.TimeSlot afternoonTimeSlot = new AvailableSlotDto.TimeSlot(
+	                                "AFTERNOON",
+	                                java.time.LocalTime.of(13, 0),
+	                                java.time.LocalTime.of(17, 0),
+	                                afternoonSlots
+	                        );
+	                        timeSlots.add(afternoonTimeSlot);
+	                    }
+
+	                    // Add day if any time slots exist
+	                    if (!timeSlots.isEmpty()) {
+	                        AvailableSlotDto slotDto = new AvailableSlotDto(
+	                                currentDate,
+	                                dayName,
+	                                timeSlots
+	                        );
+	                        result.add(slotDto);
+	                        // Continue searching for more days (don't break)
+	                        // We want to return multiple days to give users options
+	                    }
+	                }
+	            }
+
+	            currentDate = currentDate.plusDays(1);
+	        }
+
+	        // Return only the first 7 days with availability to avoid too many options
+	        List<AvailableSlotDto> limitedResults = result.stream().limit(7).collect(java.util.stream.Collectors.toList());
+
+	        if (limitedResults.isEmpty()) {
+	            System.out.println("No results found!");
+	            return ResponseEntity.ok(limitedResults); // Empty list means no availability
+	        }
+
+	        System.out.println("Returning " + limitedResults.size() + " days with slots");
+	        limitedResults.forEach(day -> {
+	            System.out.println("Day: " + day.getDate() + ", TimeSlots: " + day.getTimeSlots().size());
+	            day.getTimeSlots().forEach(ts -> {
+	                System.out.println("  - " + ts.getPeriod() + ": " + ts.getAppointmentSlots().size() + " appointment slots");
+	            });
+	        });
+	        return ResponseEntity.ok(limitedResults);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno");
+	    }
 	}
-
-	@GetMapping("/index")
-	public ResponseEntity<List<Appointment>> getAll() throws IOException {
-		List<Appointment> appointments = appointmentRepository.findAll();
-		return ResponseEntity.ok(appointments);
-	}
-
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateAppointment(@PathVariable Long id,
-	                                          @RequestBody AppointmentRequest body) {
+	public ResponseEntity<Appointment> updateAppointment(@PathVariable("id") Long id, @RequestBody AppointmentRequest body) throws IOException {
+	    Optional<Appointment> appointmentOpt = appointmentRepository.findById(id);
 
-	    Appointment db = appointmentRepository.findById(id).orElse(null);
-	    if (db == null) return ResponseEntity.notFound().build();
+	    if (appointmentOpt.isEmpty()) {
+	        return ResponseEntity.notFound().build();
+	    }
+
+	    Appointment db = appointmentOpt.get();
 
 	    // Store old values before updating to detect changes
 	    Long oldBoxId = db.getBox() != null ? db.getBox().getId() : null;
@@ -228,9 +397,16 @@ public class AppointmentController {
 	    return ResponseEntity.ok(updated);
 	}
 	
+	@GetMapping("/index")
+	public ResponseEntity<List<Appointment>> getAllAppointments() {
+	    try {
+	        List<Appointment> appointments = appointmentRepository.findAll();
+	        return ResponseEntity.ok(appointments);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
 	
-	
-
 	@GetMapping("/date/{date}")
 	public ResponseEntity<List<Appointment>> findByDate(@PathVariable("date") LocalDateTime date) {
 		List<Appointment> appointments = appointmentRepository.findByDate(date);
@@ -254,8 +430,6 @@ public class AppointmentController {
 	    return ResponseEntity.ok(appointments);
 	}
 	
-	
-
 	@GetMapping("/patientId/{patientId}")
 	public ResponseEntity<List<Appointment>> findByPatientId(@PathVariable("patientId") Long patientId) {
 
@@ -264,8 +438,6 @@ public class AppointmentController {
 	    if (appointments.isEmpty()) return ResponseEntity.notFound().build();
 	    return ResponseEntity.ok(appointments);
 	}
-
-	
 	
 	@GetMapping("/boxId/{boxId}")
 	public ResponseEntity<List<Appointment>> findByBoxId(@PathVariable("boxId") Long boxId) {
@@ -276,8 +448,6 @@ public class AppointmentController {
 	    return ResponseEntity.ok(appointments);
 	}
 	
-	
-	
 	@GetMapping("/odontologistId/{odontologistId}")
 	public ResponseEntity<List<Appointment>> findByOdontologistId(@PathVariable("odontologistId") Long odontologistId) {
 
@@ -286,7 +456,6 @@ public class AppointmentController {
 	    if (appointments.isEmpty()) return ResponseEntity.notFound().build();
 	    return ResponseEntity.ok(appointments);
 	}
-	
 	
 	@GetMapping("/treatmentId/{treatmentId}")
 	public ResponseEntity<List<Appointment>> findByTreatmentId(@PathVariable("treatmentId") Long treatmentId) {
@@ -477,4 +646,61 @@ public class AppointmentController {
 		}
 	}
 
-}
+
+	
+		@DeleteMapping("/{appointmentId}")
+		public ResponseEntity<?> deleteAppointment(@PathVariable("appointmentId") Long appointmentId) {
+		    try {
+		        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+		        
+		        if (appointmentOpt.isEmpty()) {
+		            return ResponseEntity.notFound().build();
+		        }
+		        
+		        Appointment appointment = appointmentOpt.get();
+		        
+		        // Remove materials from StockBox before deleting the appointment
+		        removeUtensilsFromStockBox(appointment);
+		        
+		        appointmentRepository.deleteById(appointmentId);
+		        return ResponseEntity.ok().build();
+		    } catch (Exception e) {
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+		                .body("Error al eliminar la cita: " + e.getMessage());
+		    }
+		}
+
+	}
+	
+		
+	
+	
+	
+	
+
+	
+
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

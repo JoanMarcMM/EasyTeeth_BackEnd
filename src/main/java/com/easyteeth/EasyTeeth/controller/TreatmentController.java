@@ -34,12 +34,17 @@ public class TreatmentController {
 
 	@Autowired
 	private TreatmentRepository treatmentRepository;
+	
+	@Autowired
+	private OdontologistRepository odontologistRepository;
 
 	
 	public TreatmentController(
-			TreatmentRepository treatmentRepository
+			TreatmentRepository treatmentRepository,
+			OdontologistRepository odontologistRepository
     ) {
         this.treatmentRepository = treatmentRepository;
+        this.odontologistRepository = odontologistRepository;
     }
 
 	@GetMapping("/{id}")
@@ -54,6 +59,40 @@ public class TreatmentController {
 	public ResponseEntity<List<Treatment>> getAll() throws IOException {
 		List<Treatment> treatments = treatmentRepository.findAll();
 		return ResponseEntity.ok(treatments);
+	}
+	
+	@GetMapping("/{id}/odontologists")
+	public ResponseEntity<List<Odontologist>> getOdontologistsByTreatment(@PathVariable Long id) {
+		try {
+			// Obtener el tratamiento con sus especialidades
+			Optional<Treatment> treatment = treatmentRepository.findByIdWithSpecialities(id);
+			
+			if (!treatment.isPresent()) {
+				return ResponseEntity.notFound().build();
+			}
+			
+			// Obtener todos los odontólogos de las especialidades del tratamiento
+			List<Odontologist> odontologists = new ArrayList<>();
+			for (Speciality speciality : treatment.get().getSpecialities()) {
+				List<Odontologist> odontologistsBySpeciality = odontologistRepository.findBySpecialitiesId(speciality.getId());
+				for (Odontologist odontologist : odontologistsBySpeciality) {
+					// Evitar duplicados
+					if (!odontologists.stream().anyMatch(o -> o.getId().equals(odontologist.getId()))) {
+						odontologists.add(odontologist);
+					}
+				}
+			}
+			
+			if (odontologists.isEmpty()) {
+				return ResponseEntity.notFound().build();
+			}
+			
+			return ResponseEntity.ok(odontologists);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 }
