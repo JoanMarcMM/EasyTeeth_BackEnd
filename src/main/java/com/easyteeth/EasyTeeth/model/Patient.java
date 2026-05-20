@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
 @Entity
 public class Patient {
@@ -24,6 +25,12 @@ public class Patient {
     String billingAddress;
     String bankAccountNumber;
     String taxIdentificationNumber;
+
+    @Transient
+    private boolean isContagious;
+
+    @Transient
+    private boolean hasAllergies;
 
     public Patient() {
 
@@ -131,5 +138,21 @@ public class Patient {
 
     public void setTaxIdentificationNumber(String taxIdentificationNumber) {
         this.taxIdentificationNumber = taxIdentificationNumber;
+    }
+
+    public boolean isContagious() {
+        return isContagious;
+    }
+
+    public void setContagious(boolean contagious) {
+        isContagious = contagious;
+    }
+
+    public boolean isHasAllergies() {
+        return hasAllergies;
+    }
+
+    public void setHasAllergies(boolean hasAllergies) {
+        this.hasAllergies = hasAllergies;
     }
 }
