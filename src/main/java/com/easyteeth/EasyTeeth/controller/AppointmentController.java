@@ -44,6 +44,10 @@ public class AppointmentController {
 	 "odontologist": { "id": 1 }, 
 	 "treatment": { "id": 3 } }
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 */
 
 	@Autowired
@@ -53,7 +57,6 @@ public class AppointmentController {
 	private OdontologistRepository odontologistRepository;
 	private TreatmentRepository treatmentRepository;
 	private StockBoxRepository stockBoxRepository;
-	private BackgroundRepository backgroundRepository;
 	
 	public AppointmentController(
             AppointmentRepository appointmentRepository,
@@ -61,8 +64,7 @@ public class AppointmentController {
             BoxRepository boxRepository,
             OdontologistRepository odontologistRepository,
             TreatmentRepository treatmentRepository,
-            StockBoxRepository stockBoxRepository,
-            BackgroundRepository backgroundRepository
+            StockBoxRepository stockBoxRepository
     ) {
         this.appointmentRepository = appointmentRepository;
         this.patientRepository = patientRepository;
@@ -70,7 +72,6 @@ public class AppointmentController {
         this.odontologistRepository = odontologistRepository;
         this.treatmentRepository = treatmentRepository;
         this.stockBoxRepository = stockBoxRepository;
-        this.backgroundRepository = backgroundRepository;
     }
 
 	@PostMapping("/new")
@@ -400,18 +401,6 @@ public class AppointmentController {
 	public ResponseEntity<List<Appointment>> getAllAppointments() {
 	    try {
 	        List<Appointment> appointments = appointmentRepository.findAll();
-            
-            // Populate medical alerts for the Frontend
-            for (Appointment app : appointments) {
-                Patient p = app.getPatient();
-                if (p != null) {
-                    backgroundRepository.findByPatientId(p.getId()).stream().findFirst().ifPresent(bg -> {
-                        p.setContagious(bg.isInfectiousDisease());
-                        p.setHasAllergies(bg.isImportantAllergie());
-                    });
-                }
-            }
-
 	        return ResponseEntity.ok(appointments);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -438,18 +427,6 @@ public class AppointmentController {
 	    List<Appointment> appointments = appointmentRepository.findByDateBetween(start, end);
 
 	    if (appointments.isEmpty()) return ResponseEntity.notFound().build();
-
-        // Populate medical alerts for the Frontend
-        for (Appointment app : appointments) {
-            Patient p = app.getPatient();
-            if (p != null) {
-                backgroundRepository.findByPatientId(p.getId()).stream().findFirst().ifPresent(bg -> {
-                    p.setContagious(bg.isInfectiousDisease());
-                    p.setHasAllergies(bg.isImportantAllergie());
-                });
-            }
-        }
-
 	    return ResponseEntity.ok(appointments);
 	}
 	
@@ -694,3 +671,36 @@ public class AppointmentController {
 		}
 
 	}
+	
+		
+	
+	
+	
+	
+
+	
+
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
