@@ -10,17 +10,27 @@ import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-    List<Appointment> findByDate(LocalDateTime date);
+    @Query("SELECT a FROM Appointment a WHERE a.date = :date ORDER BY a.date ASC")
+    List<Appointment> findByDate(@Param("date") LocalDateTime date);
 
-    List<Appointment> findByDateBetween(LocalDateTime start, LocalDateTime end);
+    @Query("SELECT a FROM Appointment a WHERE a.date BETWEEN :start AND :end ORDER BY a.date ASC")
+    List<Appointment> findByDateBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
-    List<Appointment> findByPatientId(Long patientId);
+    @Query("SELECT a FROM Appointment a WHERE a.patient.id = :patientId ORDER BY a.date ASC")
+    List<Appointment> findByPatientId(@Param("patientId") Long patientId);
 
-    List<Appointment> findByTreatmentId(Long treatmentId);
+    @Query("SELECT a FROM Appointment a WHERE a.treatment.id = :treatmentId ORDER BY a.date ASC")
+    List<Appointment> findByTreatmentId(@Param("treatmentId") Long treatmentId);
 
-    List<Appointment> findByBoxId(Long boxId);
+    @Query("SELECT a FROM Appointment a WHERE a.box.id = :boxId ORDER BY a.date ASC")
+    List<Appointment> findByBoxId(@Param("boxId") Long boxId);
 
-    List<Appointment> findByOdontologistId(Long odontologistId);
+    @Query("SELECT a FROM Appointment a WHERE a.odontologist.id = :odontologistId ORDER BY a.date ASC")
+    List<Appointment> findByOdontologistId(@Param("odontologistId") Long odontologistId);
+
+    @Override
+    @Query("SELECT a FROM Appointment a ORDER BY a.date ASC")
+    List<Appointment> findAll();
 
     @Query("""
         SELECT a
